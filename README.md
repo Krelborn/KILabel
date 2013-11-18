@@ -2,7 +2,9 @@
 
 A simple to use drop in replacement for UILabel for iOS 7 that hilights links such as URLs, twitter style usernames and hashtags and makes them tappable.
 
-## How to use in your project
+<img width=320 src="https://raw.github.com/Krelborn/KILabel/master/IKLabelDemoScreenshot.png" alt="KILabel Screenshot">
+
+## How to use it in your project
 KILabel doesn't have any special dependencies so just include the files from KILabel/Source in your project. Then use the KILabel class in place of UILabel.
 
 1. Download the latest source.
@@ -33,7 +35,7 @@ The code snippet below show's how to setup a label with a tap handling block. A 
 KILabel *label = [[KILabel alloc] initWithFrame:NSRectMake(20, 64, 280, 60)];
 label.text = @"Follow @krelborn or visit http://matthewstyles.com #shamelessplug";
 
-// Attach a block
+// Attach a block. This will get called when the user taps a link
 label.linkTapHandler = ^(KILinkType linkType, NSString *string, NSRange range) {
     NSLog(@"User tapped %@", string);
 }
