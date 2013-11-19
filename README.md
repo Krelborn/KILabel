@@ -25,6 +25,8 @@ KILabel doesn't have any special dependencies so just include the files from KIL
     * *linkType* a TDLinkType value that identifies the type of link
     * *range* an NSRange that gives the range of the link within the label's text
     * *link* an NSString containing the raw text of the link
+* Use the *linkDetectionTypes* property to select the type of link you want tappable
+* If you attach attributedText with existing links attached, they will be preserved, but only tappable if URL detection is enabled. This is handy for manually cleaning up displayed URLs while preserving the original link behind the scenes.
 
 ## A bit of sample code
 
