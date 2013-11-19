@@ -101,40 +101,14 @@
     // Don't go via public setter as this will have undesired side effect
     _automaticLinkDetectionEnabled = YES;
     
+    // All links are detectable by default
+    _linkDetectionTypes = KILinkDetectionTypeAll;
+    
     // Default background colour looks good on a white background
     self.selectedLinkBackgroundColour = [UIColor colorWithWhite:0.95 alpha:1.0];
     
-    if (self.attributedText)
-    {
-        // Setup paragraph alignement properly. IB applies the line break style
-        // to the attributed string. The problem is that the text container then
-        // breaks at the first line of text. If we set the line break to wrapping
-        // then the text container defines the break mode and it works.
-        // NOTE: This is either an Apple bug or something I've misunderstood.
-        
-        // Get the current paragraph style. IB only allows a single paragraph so
-        // getting the style of the first char is fine.
-        NSRange range;
-        NSParagraphStyle *paragraphStyle = [self.attributedText attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:&range];
-        
-        // Remove the line breaks
-        NSMutableParagraphStyle *mutableParagraphStyle = [paragraphStyle mutableCopy];
-        mutableParagraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
-        
-        // Apply new style
-        NSMutableAttributedString *restyled = [[NSMutableAttributedString alloc] initWithAttributedString:self.attributedText];
-        [restyled addAttribute:NSParagraphStyleAttributeName value:mutableParagraphStyle range:NSMakeRange(0, restyled.length)];
-        
-        // Now attach the restyled string to our storage
-        self.attributedText = restyled;
-    }
-    else
-    {
-        // This never seems to get hit. IB always sets the attributed text property
-        // but the Apple documentation implies that it could be nil so have included
-        // setting from the plain text property as a precaution.
-        [self updateTextStoreWithAttributedString:[[NSAttributedString alloc] initWithString:self.text attributes:[self attributesFromProperties]]];
-    }
+    // Establish the text store with our current text
+    [self updateTextStoreWithText];
     
     // Attach a default detection handler to help with debugging
     self.linkTapHandler = ^(KILinkType linkType, NSString *string, NSRange range) {
@@ -169,8 +143,22 @@
     [self updateTextStoreWithText];
 }
 
+- (void)setLinkDetectionTypes:(KILinkDetectionTypes)linkDetectionTypes
+{
+    _linkDetectionTypes = linkDetectionTypes;
+    
+    // Make sure the text is updated properly
+    [self updateTextStoreWithText];
+}
+
 - (NSDictionary *)getLinkAtLocation:(CGPoint)location
 {
+    // Do nothing if we have no text
+    if (self.textStorage.string.length == 0)
+    {
+        return nil;
+    }
+    
     // Work out the offset of the text in the view
     CGPoint textOffset;
     NSRange glyphRange = [self.layoutManager glyphRangeForTextContainer:self.textContainer];
@@ -229,6 +217,13 @@
     [self setNeedsDisplay];
 }
 
+- (void)setNumberOfLines:(NSInteger)numberOfLines
+{
+    [super setNumberOfLines:numberOfLines];
+    
+    self.textContainer.maximumNumberOfLines = numberOfLines;
+}
+
 - (void)setText:(NSString *)text
 {
     // Pass the text to the super class first
@@ -249,27 +244,38 @@
     [self updateTextStoreWithAttributedString:attributedText];
 }
 
+#pragma mark - Text Storage Management
+
 - (void)updateTextStoreWithText
 {
-    if (self.attributedText == nil)
+    // Now update our storage from either the attributedString or the plain text
+    if (self.attributedText)
+    {
+        [self updateTextStoreWithAttributedString:self.attributedText];
+    }
+    else if (self.text)
     {
         [self updateTextStoreWithAttributedString:[[NSAttributedString alloc] initWithString:self.text attributes:[self attributesFromProperties]]];
     }
     else
     {
-        // Now attach the string to our storage
-        [self updateTextStoreWithAttributedString:self.attributedText];
+        [self updateTextStoreWithAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:[self attributesFromProperties]]];
     }
-    
+
     [self setNeedsDisplay];
 }
 
 - (void)updateTextStoreWithAttributedString:(NSAttributedString *)attributedString
 {
-    if (self.isAutomaticLinkDetectionEnabled)
+    if (attributedString.length != 0)
     {
-        self.linkRanges = [self getRangesForLinks:attributedString.string];
-        attributedString = [self attributedStringForAttributedString:attributedString linkRanges:self.linkRanges];
+        attributedString = [KILabel sanitizeAttributedString:attributedString];
+    }
+    
+    if (self.isAutomaticLinkDetectionEnabled && (attributedString.length != 0))
+    {
+        self.linkRanges = [self getRangesForLinks:attributedString];
+        attributedString = [self addLinkAttributesToAttributedString:attributedString linkRanges:self.linkRanges];
     }
     else
     {
@@ -332,13 +338,35 @@
 }
 
 // Returns array of ranges for all special words, user handles, hashtags and urls
-- (NSArray *)getRangesForLinks:(NSString *)text
+- (NSArray *)getRangesForLinks:(NSAttributedString *)text
 {
     NSMutableArray *rangesForLinks = [[NSMutableArray alloc] init];
     
+    if (self.linkDetectionTypes & KILinkDetectionTypeUserHandle)
+    {
+        [rangesForLinks addObjectsFromArray:[self getRangesForUserHandles:text.string]];
+    }
+    
+    if (self.linkDetectionTypes & KILinkDetectionTypeHashtag)
+    {
+        [rangesForLinks addObjectsFromArray:[self getRangesForHashtags:text.string]];
+    }
+    
+    if (self.linkDetectionTypes & KILinkDetectionTypeURL)
+    {
+        [rangesForLinks addObjectsFromArray:[self getRangesForURLs:self.attributedText]];
+    }
+    
+    return rangesForLinks;
+}
+
+- (NSArray *)getRangesForUserHandles:(NSString *)text
+{
+    NSMutableArray *rangesForUserHandles = [[NSMutableArray alloc] init];
+    
     // Setup a regular expression for user handles and hashtags
     NSError *error = nil;
-    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"(?<!\\w)(@|#)([\\w\\_]+)?"
+    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"(?<!\\w)@([\\w\\_]+)?"
                                                                       options:0
                                                                         error:&error];
     
@@ -351,31 +379,49 @@
     for (NSTextCheckingResult *match in matches)
     {
         NSRange matchRange = [match range];
-        
-        KILinkType linkType = KILinkTypeHashtag;
-        
         NSString *matchString = [text substringWithRange:matchRange];
-        if ([matchString hasPrefix:@"@"])
-        {
-            linkType = KILinkTypeUserHandle;
-        }
-        else if ([matchString hasPrefix:@"#"])
-        {
-            linkType = KILinkTypeHashtag;
-        }
-        
-        [rangesForLinks addObject:@{
-                                    @"linkType" : @(linkType),
+       
+        [rangesForUserHandles addObject:@{
+                                    @"linkType" : @(KILinkTypeUserHandle),
                                     @"range" : [NSValue valueWithRange:matchRange],
                                     @"link" : matchString }];
     }
     
-    [rangesForLinks addObjectsFromArray:[self getRangesForURLs:text]];
-    
-    return rangesForLinks;
+    return rangesForUserHandles;
 }
 
-- (NSArray *)getRangesForURLs:(NSString *)text
+- (NSArray *)getRangesForHashtags:(NSString *)text
+{
+    NSMutableArray *rangesForHashtags = [[NSMutableArray alloc] init];
+    
+    // Setup a regular expression for user handles and hashtags
+    NSError *error = nil;
+    NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"(?<!\\w)#([\\w\\_]+)?"
+                                                                      options:0
+                                                                        error:&error];
+    
+    // Run the expression and get matches
+    NSArray *matches = [regex matchesInString:text
+                                      options:0
+                                        range:NSMakeRange(0, text.length)];
+    
+    // Add all our ranges to the result
+    for (NSTextCheckingResult *match in matches)
+    {
+        NSRange matchRange = [match range];
+        NSString *matchString = [text substringWithRange:matchRange];
+        
+        [rangesForHashtags addObject:@{
+                                          @"linkType" : @(KILinkTypeHashtag),
+                                          @"range" : [NSValue valueWithRange:matchRange],
+                                          @"link" : matchString }];
+    }
+    
+    return rangesForHashtags;
+}
+
+
+- (NSArray *)getRangesForURLs:(NSAttributedString *)text
 {
     NSMutableArray *rangesForURLs = [[NSMutableArray alloc] init];;
     
@@ -383,7 +429,9 @@
     NSError *error = nil;
     NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
     
-    NSArray *matches = [detector matchesInString:text
+    NSString *plainText = text.string;
+    
+    NSArray *matches = [detector matchesInString:plainText
                                          options:0
                                            range:NSMakeRange(0, text.length)];
     
@@ -391,35 +439,48 @@
     for (NSTextCheckingResult *match in matches)
     {
         NSRange matchRange = [match range];
+        
+        // If there's a link embedded in the attributes, use that instead of the raw text
+        NSString *realURL = [text attribute:NSLinkAttributeName
+                                    atIndex:matchRange.location
+                             effectiveRange:nil];
+        if (realURL == nil)
+        {
+            realURL = [plainText substringWithRange:matchRange];
+        }
+        
         if ([match resultType] == NSTextCheckingTypeLink)
         {
             [rangesForURLs addObject:@{
                                        @"linkType" : @(KILinkTypeURL),
                                        @"range" : [NSValue valueWithRange:matchRange],
-                                       @"link" : [text substringWithRange:matchRange] }];
+                                       @"link" : realURL }];
         }
     }
     
     return rangesForURLs;
 }
 
-- (NSAttributedString *)attributedStringForAttributedString:(NSAttributedString *)string linkRanges:(NSArray *)linkRanges
+- (NSAttributedString *)addLinkAttributesToAttributedString:(NSAttributedString *)string linkRanges:(NSArray *)linkRanges
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:string];
     
+    // Tint colour used to hilight non-url links
     NSDictionary *attributes = @{NSForegroundColorAttributeName : self.tintColor};
     
     for (NSDictionary *dictionary in linkRanges)
     {
         NSRange range = [[dictionary objectForKey:@"range"] rangeValue];
         
+        // Use our tint colour to hilight the link
         [attributedString addAttributes:attributes range:range];
-        
+
         // Add an URL attribute if this is a URL
         if ((KILinkType)[dictionary[@"linkType"] intValue] == KILinkTypeURL)
         {
+            // Add a link attribute using the stored link
             [attributedString addAttribute:NSLinkAttributeName
-                                     value:[attributedString.string substringWithRange:range]
+                                     value:dictionary[@"link"]
                                      range:range];
         }
     }
@@ -563,7 +624,7 @@
     if (touchedLink)
     {
         NSRange range = [[touchedLink objectForKey:@"range"] rangeValue];
-        NSString *touchedSubstring = [self.textStorage.string substringWithRange:range];
+        NSString *touchedSubstring = [touchedLink objectForKey:@"link"];
         KILinkType linkType = (KILinkType)[[touchedLink objectForKey:@"linkType"] intValue];
         
         self.linkTapHandler(linkType, touchedSubstring, range);
@@ -596,6 +657,35 @@
                                            effectiveRange:&range];
     
     return !(linkURL && (charIndex > range.location) && (charIndex <= NSMaxRange(range)));
+}
+
++ (NSAttributedString *)sanitizeAttributedString:(NSAttributedString *)attributedString
+{
+    // Setup paragraph alignement properly. IB applies the line break style
+    // to the attributed string. The problem is that the text container then
+    // breaks at the first line of text. If we set the line break to wrapping
+    // then the text container defines the break mode and it works.
+    // NOTE: This is either an Apple bug or something I've misunderstood.
+    
+    // Get the current paragraph style. IB only allows a single paragraph so
+    // getting the style of the first char is fine.
+    NSRange range;
+    NSParagraphStyle *paragraphStyle = [attributedString attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:&range];
+    
+    if (paragraphStyle == nil)
+    {
+        return attributedString;
+    }
+    
+    // Remove the line breaks
+    NSMutableParagraphStyle *mutableParagraphStyle = [paragraphStyle mutableCopy];
+    mutableParagraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    
+    // Apply new style
+    NSMutableAttributedString *restyled = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];
+    [restyled addAttribute:NSParagraphStyleAttributeName value:mutableParagraphStyle range:NSMakeRange(0, restyled.length)];
+    
+    return restyled;
 }
 
 

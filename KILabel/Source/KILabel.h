@@ -26,12 +26,24 @@
 #import <UIKit/UIKit.h>
 
 
-// Constants for identifying hot link types
+// Constants for identifying link types
 typedef NS_ENUM(NSInteger, KILinkType)
 {
     KILinkTypeUserHandle,
     KILinkTypeHashtag,
     KILinkTypeURL
+};
+
+// Constants for identifying link types we can detect
+typedef NS_OPTIONS(NSUInteger, KILinkDetectionTypes)
+{
+    KILinkDetectionTypeUserHandle = (1 << 0),
+    KILinkDetectionTypeHashtag = (1 << 1),
+    KILinkDetectionTypeURL = (1 << 2),
+    
+    // Convenient constants
+    KILinkDetectionTypeNone = 0,
+    KILinkDetectionTypeAll = NSUIntegerMax
 };
 
 
@@ -46,6 +58,8 @@ typedef void (^KILinkTapHandler)(KILinkType linkType, NSString *string, NSRange 
 // Automatic detection of links, hashtags and usernames. When this is enabled links
 // are coloured using the views tintColor property.
 @property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) BOOL automaticLinkDetectionEnabled;
+
+@property (nonatomic, assign) KILinkDetectionTypes linkDetectionTypes;
 
 // Colour used to hilight selected link background
 @property (nonatomic, copy) UIColor *selectedLinkBackgroundColour;

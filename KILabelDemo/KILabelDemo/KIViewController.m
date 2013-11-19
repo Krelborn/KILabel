@@ -34,6 +34,9 @@
 @property (weak, nonatomic) IBOutlet KILabel *label;
 
 - (IBAction)toggleDetectLinks:(UISwitch *)sender;
+- (IBAction)toggleDetectURLs:(UISwitch *)sender;
+- (IBAction)toggleDetectUsernames:(UISwitch *)sender;
+- (IBAction)toggleDetectHashtags:(UISwitch *)sender;
 - (IBAction)longPressLabel:(UILongPressGestureRecognizer *)sender;
 
 @end
@@ -119,6 +122,42 @@
 {
     // Toggle the link detection on and off
     self.label.automaticLinkDetectionEnabled = sender.isOn;
+}
+
+- (IBAction)toggleDetectURLs:(UISwitch *)sender
+{
+    if (sender.isOn)
+    {
+        self.label.linkDetectionTypes |= KILinkDetectionTypeURL;
+    }
+    else
+    {
+        self.label.linkDetectionTypes ^= KILinkDetectionTypeURL;
+    }
+}
+
+- (IBAction)toggleDetectUsernames:(UISwitch *)sender
+{
+    if (sender.isOn)
+    {
+        self.label.linkDetectionTypes |= KILinkDetectionTypeUserHandle;
+    }
+    else
+    {
+        self.label.linkDetectionTypes ^= KILinkDetectionTypeUserHandle;
+    }
+}
+
+- (IBAction)toggleDetectHashtags:(UISwitch *)sender
+{
+    if (sender.isOn)
+    {
+        self.label.linkDetectionTypes |= KILinkDetectionTypeHashtag;
+    }
+    else
+    {
+        self.label.linkDetectionTypes ^= KILinkDetectionTypeHashtag;
+    }
 }
 
 #pragma mark - Action Sheet Delegate
