@@ -128,7 +128,7 @@
                 break;
         }
         
-        NSLog(@"Default handler for label: %@, %@, (%d, %d)", linkTypeName, string, range.location, range.length);
+         NSLog(@"Default handler for label: %@, %@, (%lu, %lu)", linkTypeName, string, (unsigned long)range.location, (unsigned long)range.length);
     };
 }
 
