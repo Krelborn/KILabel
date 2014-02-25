@@ -40,7 +40,7 @@ label.text = @"Follow @krelborn or visit http://matthewstyles.com #shamelessplug
 // Attach a block. This will get called when the user taps a link
 label.linkTapHandler = ^(KILinkType linkType, NSString *string, NSRange range) {
     NSLog(@"User tapped %@", string);
-}
+};
 
 [self.view addSubview:label];
 ```
