@@ -24,7 +24,6 @@
  ***********************************************************************************/
 
 #import "KILabel.h"
-#import <MessageUI/MFMailComposeViewController.h>
 
 NSString * const KILabelLinkTypeKey = @"linkType";
 NSString * const KILabelRangeKey = @"range";
