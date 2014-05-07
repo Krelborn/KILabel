@@ -25,53 +25,116 @@
 
 #import <UIKit/UIKit.h>
 
-
-// Constants for identifying link types
-typedef NS_ENUM(NSInteger, KILinkType)
-{
-    KILinkTypeUserHandle,
-    KILinkTypeHashtag,
-    KILinkTypeURL
-};
-
 // Constants for identifying link types we can detect
-typedef NS_OPTIONS(NSUInteger, KILinkDetectionTypes)
+typedef NS_OPTIONS(NSUInteger, KILinkType)
 {
-    KILinkDetectionTypeUserHandle = (1 << 0),
-    KILinkDetectionTypeHashtag = (1 << 1),
-    KILinkDetectionTypeURL = (1 << 2),
+    KILinkTypeNone         = 0,
     
-    // Convenient constants
-    KILinkDetectionTypeNone = 0,
-    KILinkDetectionTypeAll = NSUIntegerMax
+    KILinkTypeUserHandle   = 1 << 0,
+    KILinkTypeHashtag      = 1 << 1,
+    KILinkTypeURL          = 1 << 2,
+    
+    KILinkTypeAll          = NSUIntegerMax,
 };
 
-
+@class KILabel;
 
 // Block method that is called when an interactive word is touched
-typedef void (^KILinkTapHandler)(KILinkType linkType, NSString *string, NSRange range);
+typedef void (^KILinkTapHandler)(KILabel *label, NSString *string, NSRange range);
 
+extern NSString * const KILabelLinkTypeKey;
+extern NSString * const KILabelRangeKey;
+extern NSString * const KILabelLinkKey;
 
-
+/**
+ * Smart UILabel subclass that detects links, hashtags and usernames.
+ **/
 @interface KILabel : UILabel <NSLayoutManagerDelegate>
 
-// Automatic detection of links, hashtags and usernames. When this is enabled links
-// are coloured using the views tintColor property.
+/** ****************************************************************************************** **
+ * @name Setting the link detector
+ ** ****************************************************************************************** **/
+
+/**
+ * Automatic detection of links, hashtags and usernames.
+ **/
 @property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) BOOL automaticLinkDetectionEnabled;
 
-@property (nonatomic, assign) KILinkDetectionTypes linkDetectionTypes;
+/**
+ * The link types to detect. Default value is KILinkTypeAll.
+ **/
+@property (nonatomic, assign) KILinkType linkDetectionTypes;
 
-// Colour used to hilight selected link background
+/**
+ * Set containing words to be ignored as links, hashtags or usernames.
+ * @discussion The comparison between the matches and the ignored words is case insensitive.
+ **/
+@property (nonatomic, strong) NSSet *ignoredKeywords;
+
+/** ****************************************************************************************** **
+ * @name Format & Appearance
+ ** ****************************************************************************************** **/
+
+/**
+ * Colour used to highlight selected link background. Default value is clearColor.
+ **/
 @property (nonatomic, copy) UIColor *selectedLinkBackgroundColour;
 
-// Get or set a block that is called when a link is touched
-@property (nonatomic, copy) KILinkTapHandler linkTapHandler;
+/**
+ * Flag to use the sytem format for URLs (underlined + blue color). Default value is NO.
+ **/
+@property (nonatomic, assign) BOOL systemURLStyle;
 
-// Returns a dictionary of data about the link that it at the location. Returns
-// nil if there is no link. A link dictionary contains the following keys:
-//     @"linkType" a TDLinkType that identifies the type of link
-//     @"range" the range of the link within the label text
-//     @"link" the link text. This could be an URL, handle or hashtag depending on the linkType value
-- (NSDictionary *)getLinkAtLocation:(CGPoint)location;
+/**
+ * Get the current attributes for the given link type.
+ * @param linkType The link type to get the attributes.
+ * @return A dictionary of text attributes.
+ * @discussion Default attributes contain colored font using the tintColor color property
+ **/
+- (NSDictionary*)attributesForLinkType:(KILinkType)linkType;
+
+/**
+ * Set the text attributes for each link type.
+ * @param attributes The text attributes.
+ * @param linkType The link type.
+ * @discussion Default attributes contain colored font using the tintColor color property.
+ **/
+- (void)setAttributes:(NSDictionary*)attributes forLinkType:(KILinkType)linkType;
+
+/** ****************************************************************************************** **
+ * @name Callbacks
+ ** ****************************************************************************************** **/
+
+/**
+ * Callback block for KILinkTypeUserHandle link tap.
+ **/
+@property (nonatomic, copy) KILinkTapHandler linkUserHandleTapHandler;
+
+/**
+ * Callback block for KILinkTypeHashtag link tap.
+ **/
+@property (nonatomic, copy) KILinkTapHandler linkHashtagTapHandler;
+
+/**
+ * Callback block for KILinkTypeURL link tap.
+ **/
+@property (nonatomic, copy) KILinkTapHandler linkURLTapHandler;
+
+/** ****************************************************************************************** **
+ * @name Geometry
+ ** ****************************************************************************************** **/
+
+/**
+ * Returns a dictionary of data about the link that it at the location. Returns nil if there is no link. 
+ *
+ * A link dictionary contains the following keys:
+ *     KILabelLinkTypeKey: a TDLinkType that identifies the type of link.
+ *     KILabelRangeKey: the range of the link within the label text.
+ *     KILabelLinkKey: the link text. This could be an URL, handle or hashtag depending on the linkType value.
+ *
+ * @param point The point in the coordinates of the label view.
+ * @return A dictionary containing the link.
+ **/
+- (NSDictionary*)linkAtPoint:(CGPoint)point;
 
 @end

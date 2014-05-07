@@ -49,29 +49,35 @@
     
     // Attach a simple tap handler to the label. This is a quick and dirty way
     // to respond to links being touched by the user.
-    self.label.linkTapHandler = ^(KILinkType linkType, NSString *string, NSRange range) {
-        if (linkType == KILinkTypeURL)
-        {
-            // Open URLs
-            [self attemptOpenURL:[NSURL URLWithString:string]];
-        }
-        else
-        {
-            // Put up an alert with a message if it's not an URL
-            NSString *linkTypeString = @"Username";
-            if (linkType == KILinkTypeHashtag)
-            {
-                linkTypeString = @"Hashtag";
-            }
-            
-            NSString *message = [NSString stringWithFormat:@"You tapped %@ which is a %@", string, linkTypeString];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hello"
-                                                            message:message
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"Dismiss"
-                                                  otherButtonTitles:nil];
-            [alert show];
-        }
+    
+    _label.systemURLStyle = YES;
+
+    _label.linkUserHandleTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+        NSString *linkTypeString = @"Username";
+        NSString *message = [NSString stringWithFormat:@"You tapped %@ which is a %@", string, linkTypeString];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hello"
+                                                        message:message
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Dismiss"
+                                              otherButtonTitles:nil];
+        [alert show];
+    };
+
+    _label.linkHashtagTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+        NSString *linkTypeString = @"Hashtag";
+        NSString *message = [NSString stringWithFormat:@"You tapped %@ which is a %@", string, linkTypeString];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hello"
+                                                        message:message
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Dismiss"
+                                              otherButtonTitles:nil];
+        [alert show];
+
+    };
+    
+    _label.linkURLTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+        // Open URLs
+        [self attemptOpenURL:[NSURL URLWithString:string]];
     };
 }
 
@@ -88,15 +94,13 @@
 {
     // Only accept gestures on our label and only in the begin state
     if ((recognizer.view != self.label) || (recognizer.state != UIGestureRecognizerStateBegan))
-    {
         return;
-    }
     
     // Get the position of the touch in the label
     CGPoint location = [recognizer locationInView:self.label];
     
     // Get the link under the location from the label
-    NSDictionary *link = [self.label getLinkAtLocation:location];
+    NSDictionary *link = [self.label linkAtPoint:location];
     
     if (!link)
     {
@@ -127,37 +131,25 @@
 - (IBAction)toggleDetectURLs:(UISwitch *)sender
 {
     if (sender.isOn)
-    {
-        self.label.linkDetectionTypes |= KILinkDetectionTypeURL;
-    }
+        self.label.linkDetectionTypes |= KILinkTypeURL;
     else
-    {
-        self.label.linkDetectionTypes ^= KILinkDetectionTypeURL;
-    }
+        self.label.linkDetectionTypes ^= KILinkTypeURL;
 }
 
 - (IBAction)toggleDetectUsernames:(UISwitch *)sender
 {
     if (sender.isOn)
-    {
-        self.label.linkDetectionTypes |= KILinkDetectionTypeUserHandle;
-    }
+        self.label.linkDetectionTypes |= KILinkTypeUserHandle;
     else
-    {
-        self.label.linkDetectionTypes ^= KILinkDetectionTypeUserHandle;
-    }
+        self.label.linkDetectionTypes ^= KILinkTypeUserHandle;
 }
 
 - (IBAction)toggleDetectHashtags:(UISwitch *)sender
 {
     if (sender.isOn)
-    {
-        self.label.linkDetectionTypes |= KILinkDetectionTypeHashtag;
-    }
+        self.label.linkDetectionTypes |= KILinkTypeHashtag;
     else
-    {
-        self.label.linkDetectionTypes ^= KILinkDetectionTypeHashtag;
-    }
+        self.label.linkDetectionTypes ^= KILinkTypeHashtag;
 }
 
 #pragma mark - Action Sheet Delegate
@@ -189,7 +181,7 @@
                 [controller setSubject:@"Link from my App"];
                 
                 // Create the body for the mail. We use HTML format because its nice
-                NSString *link = self.selectedLink[@"link"];
+                NSString *link = self.selectedLink[KILabelLinkKey];
                 NSString *message = [NSString stringWithFormat:@"<!DOCTYPE html><html><a href=\"%@\">%@</a><body></body></html>", link, link];
                 [controller setMessageBody:message isHTML:YES];
                 
@@ -210,7 +202,7 @@
             
         case kActionOpenInSafari:
         {
-            NSURL *url = [NSURL URLWithString:self.selectedLink[@"link"]];
+            NSURL *url = [NSURL URLWithString:self.selectedLink[KILabelLinkKey]];
             [self attemptOpenURL:url];
             break;
         }
