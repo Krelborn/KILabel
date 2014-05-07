@@ -115,7 +115,7 @@ NSString * const KILabelLinkKey = @"link";
     // Don't underline URL links by default.
     _systemURLStyle = NO;
     
-    self.selectedLinkBackgroundColour = [UIColor clearColor];//[UIColor colorWithWhite:0.95 alpha:1.0];
+    _selectedLinkBackgroundColour = nil;//[UIColor colorWithWhite:0.95 alpha:1.0];
     
     // Establish the text store with our current text
     [self updateTextStoreWithText];
@@ -183,8 +183,8 @@ NSString * const KILabelLinkKey = @"link";
         [_textStorage removeAttribute:NSBackgroundColorAttributeName range:self.selectedRange];
     
     // Apply the new selection to the text
-    if (range.length)
-        [_textStorage addAttribute:NSBackgroundColorAttributeName value:self.selectedLinkBackgroundColour range:range];
+    if (range.length && _selectedLinkBackgroundColour != nil)
+        [_textStorage addAttribute:NSBackgroundColorAttributeName value:_selectedLinkBackgroundColour range:range];
     
     // Save the new range
     _selectedRange = range;

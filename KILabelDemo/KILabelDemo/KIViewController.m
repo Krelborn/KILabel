@@ -53,9 +53,8 @@
     _label.systemURLStyle = YES;
 
     _label.linkUserHandleTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
-        NSString *linkTypeString = @"Username";
-        NSString *message = [NSString stringWithFormat:@"You tapped %@ which is a %@", string, linkTypeString];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hello"
+        NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Username"
                                                         message:message
                                                        delegate:nil
                                               cancelButtonTitle:@"Dismiss"
@@ -64,9 +63,8 @@
     };
 
     _label.linkHashtagTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
-        NSString *linkTypeString = @"Hashtag";
-        NSString *message = [NSString stringWithFormat:@"You tapped %@ which is a %@", string, linkTypeString];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hello"
+        NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hashtag"
                                                         message:message
                                                        delegate:nil
                                               cancelButtonTitle:@"Dismiss"
