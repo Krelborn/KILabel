@@ -19,6 +19,9 @@
   "source_files": [
     "KILabel/Source/KILabel.{h,m}"
   ],
+  "platforms": {
+    "ios": "7.0"
+  },
   "frameworks": "Foundation",
   "requires_arc": true
 }
