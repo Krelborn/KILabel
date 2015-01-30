@@ -1,0 +1,27 @@
+{
+  "name": "KILabel",
+  "version": "0.1.0",
+  "summary": "UILabel with higlighting options",
+  "description": "Subclass of UILabel that performs automatic url highlithging",
+  "homepage": "https://github.com/mobilejazz/KILabel",
+  "license": {
+    "type": "Apache License, Version 2.0",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Mobile Jazz": "info@mobilejazz.cat"
+  },
+  "social_media_url": "http://twitter.com/mobilejazzcat",
+  "source": {
+    "git": "https://github.com/mobilejazz/KILabel.git",
+    "tag": "0.1.0"
+  },
+  "source_files": [
+    "KILabel/Source/KILabel.{h,m}"
+  ],
+  "platforms": {
+    "ios": "7.0"
+  },
+  "frameworks": "Foundation",
+  "requires_arc": true
+}

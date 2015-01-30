@@ -21,7 +21,7 @@ KILabel doesn't have any special dependencies so just include the files from KIL
 * When using the **attributedText** property, KILabel will attempt to preserve the original attributes as much as possilbe. If you see any problems with this let me know.
 * The link hilighting and interaction can be enabled/disabled using the **automaticLinkDetectionEnabled** property.
 * The constructor always sets *userInteractionEnabled* to YES. If you subsequently set it NO you will lose the ability to interact with links even it **automaticLinkDetectionEnabled** is set to YES.
-* Use the **getLinkAtLocation** method to find out if there is link text at a point in the label's coordinate system. This returns nil if there is no link at the location, otherwise returns a dictionary with the following keys:
+* Use the **linkAtPoint** method to find out if there is link text at a point in the label's coordinate system. This returns nil if there is no link at the location, otherwise returns a dictionary with the following keys:
     * *linkType* a TDLinkType value that identifies the type of link
     * *range* an NSRange that gives the range of the link within the label's text
     * *link* an NSString containing the raw text of the link
@@ -49,7 +49,7 @@ label.linkTapHandler = ^(KILinkType linkType, NSString *string, NSRange range) {
 
 Repository includes KILabelDemo that shows a simple use of the label in a storyboard with examples for implementing tappable links.
 
-The demo also demonstrates how to use a gesture recognizer with the label to implement a long press on a link, which uses the **getLinkAtLocation|** method.
+The demo also demonstrates how to use a gesture recognizer with the label to implement a long press on a link, which uses the **linkAtPoint** method.
 
 ## License & Credits
 
