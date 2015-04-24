@@ -29,8 +29,6 @@
 
 @interface KIViewController ()
 
-@property NSDictionary *selectedLink;
-
 @property (weak, nonatomic) IBOutlet KILabel *label;
 
 - (IBAction)toggleDetectLinks:(UISwitch *)sender;
@@ -43,34 +41,35 @@
 
 @implementation KIViewController
 
+/**
+ *  When the view loads we attach handlers for the events we're interested in. KILabel differenciates
+ *  between taps on different types of link.
+ */
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    // Attach a simple tap handler to the label. This is a quick and dirty way
-    // to respond to links being touched by the user.
-    
     _label.systemURLStyle = YES;
 
+    // Attach block for handling taps on usenames
     _label.linkUserHandleTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
         NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Username"
-                                                        message:message
-                                                       delegate:nil
-                                              cancelButtonTitle:@"Dismiss"
-                                              otherButtonTitles:nil];
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Username"
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
+        
+        [self presentViewController:alert animated:YES completion:nil];
     };
 
     _label.linkHashtagTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
         NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Hashtag"
-                                                        message:message
-                                                       delegate:nil
-                                              cancelButtonTitle:@"Dismiss"
-                                              otherButtonTitles:nil];
-        [alert show];
-
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Username"
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
+        
+        [self presentViewController:alert animated:YES completion:nil];
     };
     
     _label.linkURLTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
@@ -79,20 +78,21 @@
     };
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-}
-
 #pragma mark - Action Targets
 
-// Handler for the user doing a "Long Press" gesture. This is configured in the
-// storyboard by a gesture handler attached to the label.
+/**
+ *  Handler for the user doing a "Long Press" gesture. This is configured in the
+ *  storyboard by a gesture handler attached to the label.
+ *
+ *  @param recognizer The gestrure recognizer
+ */
 - (IBAction)longPressLabel:(UILongPressGestureRecognizer *)recognizer
 {
     // Only accept gestures on our label and only in the begin state
     if ((recognizer.view != self.label) || (recognizer.state != UIGestureRecognizerStateBegan))
+    {
         return;
+    }
     
     // Get the position of the touch in the label
     CGPoint location = [recognizer locationInView:self.label];
@@ -107,117 +107,97 @@
     }
     
     // Put up an action sheet to let the user do something with the link
-    UIActionSheet *sheet = [[UIActionSheet alloc] initWithTitle:@""
-                                                       delegate:self
-                                              cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:nil
-                                              otherButtonTitles:@"Copy link", @"Mail link", @"Open in Safari", nil];
+    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Copy link" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        // Copy straight to the pasteboard
+        [UIPasteboard generalPasteboard].string = link[KILabelLinkKey];
+    }]];
     
-    // We need to save the link so we can access it from our delegate method
-    self.selectedLink = link;
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Mail link" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self mailLink:link[KILabelLinkKey]];
+    }]];
+
+    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        NSURL *url = [NSURL URLWithString:link[KILabelLinkKey]];
+        [self attemptOpenURL:url];
+    }]];
     
     // Show the action sheet
-    [sheet showInView:self.view];
+    [self presentViewController:actionSheet animated:YES completion:nil];
 }
 
+/**
+ *  Action method for toggling all link detection.
+ *
+ *  @param sender Switch action is bound to
+ */
 - (IBAction)toggleDetectLinks:(UISwitch *)sender
 {
-    // Toggle the link detection on and off
     self.label.automaticLinkDetectionEnabled = sender.isOn;
 }
 
+/**
+ *  Action method to demonstrate toggling of URL hilighting and hit detection.
+ *
+ *  @param sender Switch action is bound to
+ */
 - (IBAction)toggleDetectURLs:(UISwitch *)sender
 {
     if (sender.isOn)
+    {
         self.label.linkDetectionTypes |= KILinkTypeURL;
+    }
     else
+    {
         self.label.linkDetectionTypes ^= KILinkTypeURL;
-}
-
-- (IBAction)toggleDetectUsernames:(UISwitch *)sender
-{
-    if (sender.isOn)
-        self.label.linkDetectionTypes |= KILinkTypeUserHandle;
-    else
-        self.label.linkDetectionTypes ^= KILinkTypeUserHandle;
-}
-
-- (IBAction)toggleDetectHashtags:(UISwitch *)sender
-{
-    if (sender.isOn)
-        self.label.linkDetectionTypes |= KILinkTypeHashtag;
-    else
-        self.label.linkDetectionTypes ^= KILinkTypeHashtag;
-}
-
-#pragma mark - Action Sheet Delegate
-
--(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    // Constants for our button indexes
-    enum
-    {
-        kActionCopyLink,
-        kActionMailLink,
-        kActionOpenInSafari
-    };
-    
-    switch (buttonIndex)
-    {
-        case kActionCopyLink:
-            // Copy straight to the pasteboard
-            [UIPasteboard generalPasteboard].string = self.selectedLink[@"link"];
-            break;
-            
-        case kActionMailLink:
-        {
-            if ([MFMailComposeViewController canSendMail])
-            {
-                // Create a mail controller with a default subject
-                MFMailComposeViewController *controller = [[MFMailComposeViewController alloc] init];
-                controller.mailComposeDelegate = self;
-                [controller setSubject:@"Link from my App"];
-                
-                // Create the body for the mail. We use HTML format because its nice
-                NSString *link = self.selectedLink[KILabelLinkKey];
-                NSString *message = [NSString stringWithFormat:@"<!DOCTYPE html><html><a href=\"%@\">%@</a><body></body></html>", link, link];
-                [controller setMessageBody:message isHTML:YES];
-                
-                // Show the mail controller
-                [self presentViewController:controller animated:YES completion:NULL];
-            }
-            else
-            {
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Problem"
-                                                                message:@"Cannot send mail."
-                                                               delegate:nil
-                                                      cancelButtonTitle:@"Dismiss"
-                                                      otherButtonTitles:nil];
-                [alert show];
-            }
-            break;
-        }
-            
-        case kActionOpenInSafari:
-        {
-            NSURL *url = [NSURL URLWithString:self.selectedLink[KILabelLinkKey]];
-            [self attemptOpenURL:url];
-            break;
-        }
     }
 }
 
-#pragma mark - Mail Compose View Controller Delegate
-
--(void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+/**
+ *  Action method to demonstrate toggling of Username (Handle) hilighting and hit detection.
+ *
+ *  @param sender Switch action is bound to
+ */
+- (IBAction)toggleDetectUsernames:(UISwitch *)sender
 {
-    [self dismissViewControllerAnimated:YES completion:NULL];
+    if (sender.isOn)
+    {
+        self.label.linkDetectionTypes |= KILinkTypeUserHandle;
+    }
+    else
+    {
+        self.label.linkDetectionTypes ^= KILinkTypeUserHandle;
+    }
 }
+
+/**
+ *  Action method to demonstrate toggling of Hashtag hilighting and hit detection.
+ *
+ *  @param sender Switch action is bound to
+ */
+- (IBAction)toggleDetectHashtags:(UISwitch *)sender
+{
+    if (sender.isOn)
+    {
+        self.label.linkDetectionTypes |= KILinkTypeHashtag;
+    }
+    else
+    {
+        self.label.linkDetectionTypes ^= KILinkTypeHashtag;
+    }
+}
+
 
 #pragma mark - Helper methods
 
-// Checks to see if its an URL that we can open in safari. If we can then open it,
-// otherwise put up an alert to the user.
+/**
+ *  Checks to see if its an URL that we can open in safari. If we can then open it,
+ *  otherwise put up an alert to the user.
+ *
+ *  @param url URL to open in Safari
+ */
 - (void)attemptOpenURL:(NSURL *)url
 {
     BOOL safariCompatible = [url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"];
@@ -235,6 +215,52 @@
                                               otherButtonTitles:nil];
         [alert show];
     }
+}
+
+/**
+ *  Create an email containing the specified link. Will put up an alert if we can't send mail.
+ *
+ *  @param link The link to use as content of the email.
+ */
+- (void)mailLink:(NSString *)link
+{
+    if ([MFMailComposeViewController canSendMail])
+    {
+        // Create a mail controller with a default subject
+        MFMailComposeViewController *controller = [[MFMailComposeViewController alloc] init];
+        controller.mailComposeDelegate = self;
+        [controller setSubject:@"Link from my App"];
+        
+        // Create the body for the mail. We use HTML format because its nice
+        NSString *message = [NSString stringWithFormat:@"<!DOCTYPE html><html><a href=\"%@\">%@</a><body></body></html>", link, link];
+        [controller setMessageBody:message isHTML:YES];
+        
+        // Show the mail controller
+        [self presentViewController:controller animated:YES completion:NULL];
+    }
+    else
+    {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Problem"
+                                                                       message:@"Cannot send mail."
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
+        
+        [self presentViewController:alert animated:YES completion:nil];
+    }
+}
+
+@end
+
+
+#pragma mark - MFMailComposeViewControllerDelegate
+@implementation KIViewController (MFMailComposeViewControllerDelegate)
+
+/**
+ *  Just dismiss the controller. Don't do anything else.
+ */
+-(void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 @end
