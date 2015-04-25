@@ -16,7 +16,7 @@ KILabel doesn't have any special dependencies so just include the files from KIL
 You can also use KILabel with Swift. Just include compile the files in your XCode project in the usual way but add the following line to your Objective-C Bridging Header.
 
 ``` objective-c
-#import "KILabel"
+#import "KILabel.h"
 ```
 
 ## Things to know
