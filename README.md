@@ -35,7 +35,7 @@ The code snippet below show's how to setup a label with a tap handling block. A 
 ``` objective-c
 // Create the label, you can do this in Interface Builder as well
 KILabel *label = [[KILabel alloc] initWithFrame:NSRectMake(20, 64, 280, 60)];
-label.text = @"Follow @krelborn or visit http://matthewstyles.com #shamelessplug";
+label.text = @"Follow @krelborn or visit http://compiledcreations.com #shamelessplug";
 
 // Attach a block to be called when the user taps a user handle
 label.userHandleLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
