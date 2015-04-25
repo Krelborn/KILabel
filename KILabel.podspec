@@ -26,14 +26,12 @@ Pod::Spec.new do |s|
   s.social_media_url   = "http://twitter.com/Krelborn"
 
   s.platform     = :ios, "7.0"
-  
-  s.source       = { :git => "https://github.com/Krelborn/KILabel.git", :commit => "9280a86960b0eee2f210732d7bbdda4da4dfb229" }
-  # s.source       = { :git => "https://github.com/Krelborn/KILabel.git", :tag => "1.0.0" }
+
+  s.source       = { :git => "https://github.com/Krelborn/KILabel.git", :tag => "1.0.0" }
 
   s.source_files  = "KILabel/Source/**/*.{h,m}"
   public_header_files = "KILabel/Source/**/*.h"
 
-  # s.framework  = "SomeFramework"
   s.frameworks = "UIKit", "Foundation"
 
   s.requires_arc = true
