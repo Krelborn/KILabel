@@ -13,6 +13,12 @@ KILabel doesn't have any special dependencies so just include the files from KIL
     * Design your user interface as you would normally. In Interface Builder set the custom class for any UILabel you want to replace to KILabel. The label should honour all IB settings. OR
     * Create KILabel objects in code.
 
+You can also use KILabel with Swift. Just include compile the files in your XCode project in the usual way but add the following line to your Objective-C Bridging Header.
+
+``` objective-c
+#import "KILabel"
+```
+
 ## Things to know
 * To handle taps on links you attach a block to the label's linkTapHandler property (See sample code).
 * Usernames and hashtag links are coloured using the label's **tint** property. This can be configured through IB.
@@ -39,26 +45,50 @@ label.text = @"Follow @krelborn or visit http://compiledcreations.com #shameless
 
 // Attach a block to be called when the user taps a user handle
 label.userHandleLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
-    NSLog(@"User tapped %@", string);
+  NSLog(@"User tapped %@", string);
 };
 
 // Attach a block to be called when the user taps a hashtag
 label.hashtagLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
-    NSLog(@"Hashtag tapped %@", string);
+  NSLog(@"Hashtag tapped %@", string);
 };
 
 // Attach a block to be called when the user taps a URL
 label.urlLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
-    NSLog(@"URL tapped %@", string);
+  NSLog(@"URL tapped %@", string);
 };
-
 
 [self.view addSubview:label];
 ```
 
+KILabel also works in Swift. Here's the above example again but in swift.
+
+``` swift
+// Create the label, you can do this in Interface Builder as well
+let label = KILabel(frame: CGRect(x: 20, y: 64, width: 280, height: 60))
+label.text = "Follow @krelborn or visit http://compiledcreations.com #shamelessplug"
+
+// Attach a block to be called when the user taps a user handle
+label.userHandleLinkTapHandler = { label, handle, range in
+  NSLog("User handle \(handle) tapped")
+}
+
+// Attach a block to be called when the user taps a hashtag
+label.hashtagLinkTapHandler = { label, hashtag, range in
+  NSLog("Hashtah \(hashtag) tapped")
+}
+
+// Attach a block to be called when the user taps a URL
+label.urlLinkTapHandler = { label, url, range in
+  NSLog("URL \(url) tapped")
+}
+
+view.addSubview(label)
+```
+
 ## Demo
 
-Repository includes KILabelDemo that shows a simple use of the label in a storyboard with examples for implementing tappable links.
+Repository includes KILabelDemo written in Objective-C that shows a simple use of the label in a storyboard with examples for implementing tappable links.
 
 The demo also demonstrates how to use a gesture recognizer with the label to implement a long press on a link, which uses the **linkAtPoint** method.
 
