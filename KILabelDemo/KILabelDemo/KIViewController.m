@@ -52,7 +52,7 @@
     _label.systemURLStyle = YES;
 
     // Attach block for handling taps on usenames
-    _label.linkUserHandleTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+    _label.userHandleLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
         NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Username"
                                                                        message:message
@@ -62,9 +62,9 @@
         [self presentViewController:alert animated:YES completion:nil];
     };
 
-    _label.linkHashtagTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+    _label.hashtagLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
         NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Username"
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Hashtag"
                                                                        message:message
                                                                 preferredStyle:UIAlertControllerStyleAlert];
         [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
@@ -72,7 +72,7 @@
         [self presentViewController:alert animated:YES completion:nil];
     };
     
-    _label.linkURLTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+    _label.urlLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
         // Open URLs
         [self attemptOpenURL:[NSURL URLWithString:string]];
     };

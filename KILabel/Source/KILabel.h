@@ -26,16 +26,25 @@
 #import <UIKit/UIKit.h>
 
 // Constants for identifying link types we can detect
-typedef NS_OPTIONS(NSUInteger, KILinkType)
+typedef NS_ENUM(NSUInteger, KILinkType)
 {
-    KILinkTypeNone         = 0,
-    
-    KILinkTypeUserHandle   = 1 << 0,
-    KILinkTypeHashtag      = 1 << 1,
-    KILinkTypeURL          = 1 << 2,
-    
-    KILinkTypeAll          = NSUIntegerMax,
+    KILinkTypeUserHandle,
+    KILinkTypeHashtag,
+    KILinkTypeURL,
 };
+
+// Flags for specifying combinations of link types as a bitmask
+typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
+{
+    KILinkTypeOptionNone         = 0,
+    
+    KILinkTypeOptionUserHandle   = 1 << KILinkTypeUserHandle,
+    KILinkTypeOptionHashtag      = 1 << KILinkTypeHashtag,
+    KILinkTypeOptionURL          = 1 << KILinkTypeURL,
+    
+    KILinkTypeOptionAll          = NSUIntegerMax,
+};
+
 
 @class KILabel;
 
@@ -61,9 +70,9 @@ extern NSString * const KILabelLinkKey;
 @property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) BOOL automaticLinkDetectionEnabled;
 
 /**
- * The link types to detect. Default value is KILinkTypeAll.
+ * The combination of link types to detect. Default value is KILinkTypeAll.
  **/
-@property (nonatomic, assign) KILinkType linkDetectionTypes;
+@property (nonatomic, assign) KILinkTypeOption linkDetectionTypes;
 
 /**
  * Set containing words to be ignored as links, hashtags or usernames.
@@ -87,6 +96,7 @@ extern NSString * const KILabelLinkKey;
 
 /**
  * Get the current attributes for the given link type.
+ *
  * @param linkType The link type to get the attributes.
  * @return A dictionary of text attributes.
  * @discussion Default attributes contain colored font using the tintColor color property
@@ -95,6 +105,7 @@ extern NSString * const KILabelLinkKey;
 
 /**
  * Set the text attributes for each link type.
+ *
  * @param attributes The text attributes.
  * @param linkType The link type.
  * @discussion Default attributes contain colored font using the tintColor color property.
@@ -108,17 +119,17 @@ extern NSString * const KILabelLinkKey;
 /**
  * Callback block for KILinkTypeUserHandle link tap.
  **/
-@property (nonatomic, copy) KILinkTapHandler linkUserHandleTapHandler;
+@property (nonatomic, copy) KILinkTapHandler userHandleLinkTapHandler;
 
 /**
  * Callback block for KILinkTypeHashtag link tap.
  **/
-@property (nonatomic, copy) KILinkTapHandler linkHashtagTapHandler;
+@property (nonatomic, copy) KILinkTapHandler hashtagLinkTapHandler;
 
 /**
  * Callback block for KILinkTypeURL link tap.
  **/
-@property (nonatomic, copy) KILinkTapHandler linkURLTapHandler;
+@property (nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
 
 /** ****************************************************************************************** **
  * @name Geometry

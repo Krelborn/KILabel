@@ -107,7 +107,7 @@ NSString * const KILabelLinkKey = @"link";
     _automaticLinkDetectionEnabled = YES;
     
     // All links are detectable by default
-    _linkDetectionTypes = KILinkTypeAll;
+    _linkDetectionTypes = KILinkTypeOptionAll;
     
     // Link Type Attributes. Default is empty (no attributes).
     _linkTypeAttributes = [NSMutableDictionary dictionary];
@@ -115,7 +115,9 @@ NSString * const KILabelLinkKey = @"link";
     // Don't underline URL links by default.
     _systemURLStyle = NO;
     
-    _selectedLinkBackgroundColour = nil;//[UIColor colorWithWhite:0.95 alpha:1.0];
+    // By default we hilight the selected link during a touch to give feedback that we are
+    // responding to touch.
+    _selectedLinkBackgroundColour = [UIColor colorWithWhite:0.95 alpha:1.0];
     
     // Establish the text store with our current text
     [self updateTextStoreWithText];
@@ -131,7 +133,7 @@ NSString * const KILabelLinkKey = @"link";
     [self updateTextStoreWithText];
 }
 
-- (void)setLinkDetectionTypes:(KILinkType)linkDetectionTypes
+- (void)setLinkDetectionTypes:(KILinkTypeOption)linkDetectionTypes
 {
     _linkDetectionTypes = linkDetectionTypes;
     
@@ -234,7 +236,9 @@ NSString * const KILabelLinkKey = @"link";
     NSDictionary *attributes = _linkTypeAttributes[@(linkType)];
     
     if (!attributes)
+    {
         attributes = @{NSForegroundColorAttributeName : self.tintColor};
+    }
     
     return attributes;
 }
@@ -242,9 +246,13 @@ NSString * const KILabelLinkKey = @"link";
 - (void)setAttributes:(NSDictionary*)attributes forLinkType:(KILinkType)linkType
 {
     if (attributes)
+    {
         _linkTypeAttributes[@(linkType)] = attributes;
+    }
     else
+    {
         [_linkTypeAttributes removeObjectForKey:@(linkType)];
+    }
     
     // Force refresh text
     self.text = self.text;
@@ -333,19 +341,32 @@ NSString * const KILabelLinkKey = @"link";
     return attributes;
 }
 
-// Returns array of ranges for all special words, user handles, hashtags and urls
+/**
+ *  Returns array of ranges for all special words, user handles, hashtags and urls in the specfied
+ *  text.
+ *
+ *  @param text Text to parse for links
+ *
+ *  @return Array of dictionaries describing the links.
+ */
 - (NSArray *)getRangesForLinks:(NSAttributedString *)text
 {
     NSMutableArray *rangesForLinks = [[NSMutableArray alloc] init];
     
-    if (self.linkDetectionTypes & KILinkTypeUserHandle)
+    if (self.linkDetectionTypes & KILinkTypeOptionUserHandle)
+    {
         [rangesForLinks addObjectsFromArray:[self getRangesForUserHandles:text.string]];
+    }
     
-    if (self.linkDetectionTypes & KILinkTypeHashtag)
+    if (self.linkDetectionTypes & KILinkTypeOptionHashtag)
+    {
         [rangesForLinks addObjectsFromArray:[self getRangesForHashtags:text.string]];
+    }
     
-    if (self.linkDetectionTypes & KILinkTypeURL)
+    if (self.linkDetectionTypes & KILinkTypeOptionURL)
+    {
         [rangesForLinks addObjectsFromArray:[self getRangesForURLs:self.attributedText]];
+    }
     
     return rangesForLinks;
 }
@@ -645,20 +666,28 @@ NSString * const KILabelLinkKey = @"link";
 
 - (void)receivedActionForLinkType:(KILinkType)linkType string:(NSString*)string range:(NSRange)range
 {
-    if (linkType == KILinkTypeUserHandle)
+    switch (linkType)
     {
-        if (_linkUserHandleTapHandler)
-            _linkUserHandleTapHandler(self, string, range);
-    }
-    else if (linkType == KILinkTypeHashtag)
-    {
-        if (_linkHashtagTapHandler)
-            _linkHashtagTapHandler(self, string, range);
-    }
-    else if (linkType == KILinkTypeURL)
-    {
-        if (_linkURLTapHandler)
-            _linkURLTapHandler(self, string, range);
+    case KILinkTypeUserHandle:
+        if (_userHandleLinkTapHandler)
+        {
+            _userHandleLinkTapHandler(self, string, range);
+        }
+        break;
+        
+    case KILinkTypeHashtag:
+        if (_hashtagLinkTapHandler)
+        {
+            _hashtagLinkTapHandler(self, string, range);
+        }
+        break;
+        
+    case KILinkTypeURL:
+        if (_urlLinkTapHandler)
+        {
+            _urlLinkTapHandler(self, string, range);
+        }
+        break;
     }
 }
 
