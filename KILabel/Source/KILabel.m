@@ -69,6 +69,7 @@ NSString * const KILabelLinkKey = @"link";
     {
         [self setupTextSystem];
     }
+    
     return self;
 }
 
@@ -79,6 +80,7 @@ NSString * const KILabelLinkKey = @"link";
     {
         [self setupTextSystem];
     }
+    
     return self;
 }
 
@@ -145,7 +147,9 @@ NSString * const KILabelLinkKey = @"link";
 {
     // Do nothing if we have no text
     if (_textStorage.string.length == 0)
+    {
         return nil;
+    }
     
     // Work out the offset of the text in the view
     CGPoint textOffset;
@@ -171,7 +175,9 @@ NSString * const KILabelLinkKey = @"link";
         NSRange range = [[dictionary objectForKey:KILabelRangeKey] rangeValue];
         
         if ((touchedChar >= range.location) && touchedChar < (range.location + range.length))
+        {
             return dictionary;
+        }
     }
     
     return nil;
@@ -182,11 +188,15 @@ NSString * const KILabelLinkKey = @"link";
 {
     // Remove the current selection if the selection is changing
     if (self.selectedRange.length && !NSEqualRanges(self.selectedRange, range))
+    {
         [_textStorage removeAttribute:NSBackgroundColorAttributeName range:self.selectedRange];
+    }
     
     // Apply the new selection to the text
     if (range.length && _selectedLinkBackgroundColour != nil)
+    {
         [_textStorage addAttribute:NSBackgroundColorAttributeName value:_selectedLinkBackgroundColour range:range];
+    }
     
     // Save the new range
     _selectedRange = range;
@@ -209,7 +219,9 @@ NSString * const KILabelLinkKey = @"link";
     // Update our text store with an attributed string based on the original
     // label text properties.
     if (!text)
+    {
         text = @"";
+    }
     
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text attributes:[self attributesFromProperties]];
     [self updateTextStoreWithAttributedString:attributedText];
@@ -264,11 +276,17 @@ NSString * const KILabelLinkKey = @"link";
 {
     // Now update our storage from either the attributedString or the plain text
     if (self.attributedText)
+    {
         [self updateTextStoreWithAttributedString:self.attributedText];
+    }
     else if (self.text)
+    {
         [self updateTextStoreWithAttributedString:[[NSAttributedString alloc] initWithString:self.text attributes:[self attributesFromProperties]]];
+    }
     else
+    {
         [self updateTextStoreWithAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:[self attributesFromProperties]]];
+    }
     
     [self setNeedsDisplay];
 }
@@ -324,9 +342,13 @@ NSString * const KILabelLinkKey = @"link";
     // Setup colour attributes
     UIColor *colour = self.textColor;
     if (!self.isEnabled)
+    {
         colour = [UIColor lightGrayColor];
+    }
     else if (self.isHighlighted)
+    {
         colour = self.highlightedTextColor;
+    }
     
     // Setup paragraph attributes
     NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
@@ -393,10 +415,12 @@ NSString * const KILabelLinkKey = @"link";
         NSString *matchString = [text substringWithRange:matchRange];
         
         if (![self ignoreMatch:matchString])
+        {
             [rangesForUserHandles addObject:@{KILabelLinkTypeKey : @(KILinkTypeUserHandle),
                                               KILabelRangeKey : [NSValue valueWithRange:matchRange],
                                               KILabelLinkKey : matchString
-                                              }];
+                                            }];
+        }
     }
     
     return rangesForUserHandles;
@@ -424,11 +448,12 @@ NSString * const KILabelLinkKey = @"link";
         NSString *matchString = [text substringWithRange:matchRange];
         
         if (![self ignoreMatch:matchString])
+        {
             [rangesForHashtags addObject:@{KILabelLinkTypeKey : @(KILinkTypeHashtag),
                                            KILabelRangeKey : [NSValue valueWithRange:matchRange],
                                            KILabelLinkKey : matchString,
-                                           }];
-        
+                                        }];
+        }
     }
     
     return rangesForHashtags;
@@ -466,7 +491,7 @@ NSString * const KILabelLinkKey = @"link";
                 [rangesForURLs addObject:@{KILabelLinkTypeKey : @(KILinkTypeURL),
                                            KILabelRangeKey : [NSValue valueWithRange:matchRange],
                                            KILabelLinkKey : realURL,
-                                           }];
+                                        }];
             }
         }
     }
@@ -482,8 +507,7 @@ NSString * const KILabelLinkKey = @"link";
 - (NSAttributedString *)addLinkAttributesToAttributedString:(NSAttributedString *)string linkRanges:(NSArray *)linkRanges
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:string];
-    
-    
+
     for (NSDictionary *dictionary in linkRanges)
     {
         NSRange range = [[dictionary objectForKey:KILabelRangeKey] rangeValue];
@@ -564,7 +588,9 @@ NSString * const KILabelLinkKey = @"link";
     CGRect textBounds = [_layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:_textContainer];
     CGFloat paddingHeight = (self.bounds.size.height - textBounds.size.height) / 2.0f;
     if (paddingHeight > 0)
+    {
         textOffset.y = paddingHeight;
+    }
     
     return textOffset;
 }
@@ -572,12 +598,14 @@ NSString * const KILabelLinkKey = @"link";
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
+    
     _textContainer.size = self.bounds.size;
 }
 
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
+    
     _textContainer.size = self.bounds.size;
 }
 
@@ -612,9 +640,13 @@ NSString * const KILabelLinkKey = @"link";
     touchedLink = [self linkAtPoint:touchLocation];
     
     if (touchedLink)
+    {
         self.selectedRange = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
+    }
     else
+    {
         [super touchesBegan:touches withEvent:event];
+    }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -632,6 +664,7 @@ NSString * const KILabelLinkKey = @"link";
     if (_isTouchMoved)
     {
         self.selectedRange = NSMakeRange(0, 0);
+        
         return;
     }
     
@@ -716,7 +749,9 @@ NSString * const KILabelLinkKey = @"link";
     NSParagraphStyle *paragraphStyle = [attributedString attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:&range];
     
     if (paragraphStyle == nil)
+    {
         return attributedString;
+    }
     
     // Remove the line breaks
     NSMutableParagraphStyle *mutableParagraphStyle = [paragraphStyle mutableCopy];
