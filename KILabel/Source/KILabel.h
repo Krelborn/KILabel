@@ -25,6 +25,8 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 // Constants for identifying link types we can detect
 typedef NS_ENUM(NSUInteger, KILinkType)
 {
@@ -78,7 +80,7 @@ extern NSString * const KILabelLinkKey;
  * Set containing words to be ignored as links, hashtags or usernames.
  * @discussion The comparison between the matches and the ignored words is case insensitive.
  **/
-@property (nonatomic, strong) NSSet *ignoredKeywords;
+@property (nullable, nonatomic, strong) NSSet *ignoredKeywords;
 
 /** ****************************************************************************************** **
  * @name Format & Appearance
@@ -87,7 +89,7 @@ extern NSString * const KILabelLinkKey;
 /**
  * Color used to highlight selected link background. Default value is (0.95, 0.95, 0.95, 1.0).
  **/
-@property (nonatomic, copy) UIColor *selectedLinkBackgroundColor;
+@property (nullable, nonatomic, copy) UIColor *selectedLinkBackgroundColor;
 
 /**
  * Flag to use the sytem format for URLs (underlined + blue color). Default value is NO.
@@ -101,7 +103,7 @@ extern NSString * const KILabelLinkKey;
  * @return A dictionary of text attributes.
  * @discussion Default attributes contain colored font using the tintColor color property
  **/
-- (NSDictionary*)attributesForLinkType:(KILinkType)linkType;
+- (nullable NSDictionary*)attributesForLinkType:(KILinkType)linkType;
 
 /**
  * Set the text attributes for each link type.
@@ -110,7 +112,7 @@ extern NSString * const KILabelLinkKey;
  * @param linkType The link type.
  * @discussion Default attributes contain colored font using the tintColor color property.
  **/
-- (void)setAttributes:(NSDictionary*)attributes forLinkType:(KILinkType)linkType;
+- (void)setAttributes:(nullable NSDictionary*)attributes forLinkType:(KILinkType)linkType;
 
 /** ****************************************************************************************** **
  * @name Callbacks
@@ -119,17 +121,17 @@ extern NSString * const KILabelLinkKey;
 /**
  * Callback block for KILinkTypeUserHandle link tap.
  **/
-@property (nonatomic, copy) KILinkTapHandler userHandleLinkTapHandler;
+@property (nullable, nonatomic, copy) KILinkTapHandler userHandleLinkTapHandler;
 
 /**
  * Callback block for KILinkTypeHashtag link tap.
  **/
-@property (nonatomic, copy) KILinkTapHandler hashtagLinkTapHandler;
+@property (nullable, nonatomic, copy) KILinkTapHandler hashtagLinkTapHandler;
 
 /**
  * Callback block for KILinkTypeURL link tap.
  **/
-@property (nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
+@property (nullable, nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
 
 /** ****************************************************************************************** **
  * @name Geometry
@@ -146,6 +148,8 @@ extern NSString * const KILabelLinkKey;
  * @param point The point in the coordinates of the label view.
  * @return A dictionary containing the link.
  **/
-- (NSDictionary*)linkAtPoint:(CGPoint)point;
+- (nullable NSDictionary*)linkAtPoint:(CGPoint)point;
 
 @end
+
+NS_ASSUME_NONNULL_END
