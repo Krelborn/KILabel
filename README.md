@@ -37,10 +37,21 @@ The code snippet below show's how to setup a label with a tap handling block. A 
 KILabel *label = [[KILabel alloc] initWithFrame:NSRectMake(20, 64, 280, 60)];
 label.text = @"Follow @krelborn or visit http://matthewstyles.com #shamelessplug";
 
-// Attach a block. This will get called when the user taps a link
-label.linkTapHandler = ^(KILinkType linkType, NSString *string, NSRange range) {
+// Attach a block to be called when the user taps a user handle
+label.userHandleLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
     NSLog(@"User tapped %@", string);
 };
+
+// Attach a block to be called when the user taps a hashtag
+label.hashtagLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+    NSLog(@"Hashtag tapped %@", string);
+};
+
+// Attach a block to be called when the user taps a URL
+label.urlLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+    NSLog(@"URL tapped %@", string);
+};
+
 
 [self.view addSubview:label];
 ```
@@ -61,6 +72,6 @@ KILabel was inspired by STTweetLabel (http://github.com/SebastienThiebaud) and o
 
 Please get in touch with any comments or report any bugs through the obvious channels.
 
-- http://matthewstyles.com
+- http://compiledcreations.com
 - http://twitter.com/krelborn
 - http://github.com/krelborn
