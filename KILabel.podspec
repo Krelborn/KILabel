@@ -19,7 +19,7 @@ Pod::Spec.new do |s|
                    DESC
 
   s.homepage     = "https://github.com/Krelborn/KILabel"
-  # s.screenshots  = "https://github.com/Krelborn/KILabel/blob/master/IKLabelDemoScreenshot.png"
+  s.screenshots  = "https://raw.githubusercontent.com/Krelborn/KILabel/master/IKLabelDemoScreenshot.png"
   s.license      = { :type => "MIT", :file => "LICENSE" }
 
   s.author             = { "Matt Styles" => "matt@compiledcreations.com" }
