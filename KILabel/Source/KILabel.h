@@ -85,9 +85,9 @@ extern NSString * const KILabelLinkKey;
  ** ****************************************************************************************** **/
 
 /**
- * Colour used to highlight selected link background. Default value is nil (none).
+ * Color used to highlight selected link background. Default value is (0.95, 0.95, 0.95, 1.0).
  **/
-@property (nonatomic, copy) UIColor *selectedLinkBackgroundColour;
+@property (nonatomic, copy) UIColor *selectedLinkBackgroundColor;
 
 /**
  * Flag to use the sytem format for URLs (underlined + blue color). Default value is NO.

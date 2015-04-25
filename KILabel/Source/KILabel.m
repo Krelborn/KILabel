@@ -119,7 +119,7 @@ NSString * const KILabelLinkKey = @"link";
     
     // By default we hilight the selected link during a touch to give feedback that we are
     // responding to touch.
-    _selectedLinkBackgroundColour = [UIColor colorWithWhite:0.95 alpha:1.0];
+    _selectedLinkBackgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0];
     
     // Establish the text store with our current text
     [self updateTextStoreWithText];
@@ -183,7 +183,7 @@ NSString * const KILabelLinkKey = @"link";
     return nil;
 }
 
-// Applies background colour to selected range. Used to hilight touched links
+// Applies background color to selected range. Used to hilight touched links
 - (void)setSelectedRange:(NSRange)range
 {
     // Remove the current selection if the selection is changing
@@ -193,9 +193,9 @@ NSString * const KILabelLinkKey = @"link";
     }
     
     // Apply the new selection to the text
-    if (range.length && _selectedLinkBackgroundColour != nil)
+    if (range.length && _selectedLinkBackgroundColor != nil)
     {
-        [_textStorage addAttribute:NSBackgroundColorAttributeName value:_selectedLinkBackgroundColour range:range];
+        [_textStorage addAttribute:NSBackgroundColorAttributeName value:_selectedLinkBackgroundColor range:range];
     }
     
     // Save the new range
@@ -339,15 +339,15 @@ NSString * const KILabelLinkKey = @"link";
         shadow.shadowColor = nil;
     }
     
-    // Setup colour attributes
-    UIColor *colour = self.textColor;
+    // Setup color attributes
+    UIColor *color = self.textColor;
     if (!self.isEnabled)
     {
-        colour = [UIColor lightGrayColor];
+        color = [UIColor lightGrayColor];
     }
     else if (self.isHighlighted)
     {
-        colour = self.highlightedTextColor;
+        color = self.highlightedTextColor;
     }
     
     // Setup paragraph attributes
@@ -356,7 +356,7 @@ NSString * const KILabelLinkKey = @"link";
     
     // Create the dictionary
     NSDictionary *attributes = @{NSFontAttributeName : self.font,
-                                 NSForegroundColorAttributeName : colour,
+                                 NSForegroundColorAttributeName : color,
                                  NSShadowAttributeName : shadow,
                                  NSParagraphStyleAttributeName : paragraph,
                                  };
@@ -515,7 +515,7 @@ NSString * const KILabelLinkKey = @"link";
         
         NSDictionary *attributes = [self attributesForLinkType:linkType];
         
-        // Use our tint colour to hilight the link
+        // Use our tint color to hilight the link
         [attributedString addAttributes:attributes range:range];
         
         // Add an URL attribute if this is a URL
