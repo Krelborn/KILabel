@@ -23,6 +23,8 @@
 		C97DB319183A56F00028EA5C /* KILabelDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C97DB318183A56F00028EA5C /* KILabelDemoTests.m */; };
 		C97DB325183A57110028EA5C /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = C97DB324183A57110028EA5C /* KILabel.m */; };
 		C97DB327183A59670028EA5C /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB326183A59670028EA5C /* MessageUI.framework */; };
+		C9ABA08A1AEE5A8600363407 /* KILabelTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */; };
+		C9ABA08D1AEE5BAC00363407 /* KILabelTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ABA08C1AEE5BAC00363407 /* KILabelTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +60,10 @@
 		C97DB323183A57110028EA5C /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KILabel.h; path = ../KILabel/Source/KILabel.h; sourceTree = "<group>"; };
 		C97DB324183A57110028EA5C /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KILabel.m; path = ../KILabel/Source/KILabel.m; sourceTree = "<group>"; };
 		C97DB326183A59670028EA5C /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		C9ABA0881AEE5A8600363407 /* KILabelTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabelTableViewController.h; sourceTree = "<group>"; };
+		C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabelTableViewController.m; sourceTree = "<group>"; };
+		C9ABA08B1AEE5BAC00363407 /* KILabelTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabelTableViewCell.h; sourceTree = "<group>"; };
+		C9ABA08C1AEE5BAC00363407 /* KILabelTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabelTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +129,10 @@
 				C97DB2FC183A56EF0028EA5C /* KIAppDelegate.h */,
 				C97DB2FD183A56EF0028EA5C /* KIAppDelegate.m */,
 				C97DB2FF183A56EF0028EA5C /* Main.storyboard */,
+				C9ABA0881AEE5A8600363407 /* KILabelTableViewController.h */,
+				C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */,
+				C9ABA08B1AEE5BAC00363407 /* KILabelTableViewCell.h */,
+				C9ABA08C1AEE5BAC00363407 /* KILabelTableViewCell.m */,
 				C97DB302183A56EF0028EA5C /* KIViewController.h */,
 				C97DB303183A56EF0028EA5C /* KIViewController.m */,
 				C97DB305183A56EF0028EA5C /* Images.xcassets */,
@@ -269,7 +279,9 @@
 			files = (
 				C97DB325183A57110028EA5C /* KILabel.m in Sources */,
 				C97DB304183A56EF0028EA5C /* KIViewController.m in Sources */,
+				C9ABA08D1AEE5BAC00363407 /* KILabelTableViewCell.m in Sources */,
 				C97DB2FE183A56EF0028EA5C /* KIAppDelegate.m in Sources */,
+				C9ABA08A1AEE5A8600363407 /* KILabelTableViewController.m in Sources */,
 				C97DB2FA183A56EF0028EA5C /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
