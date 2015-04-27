@@ -40,7 +40,7 @@ NSString * const KILabelCellIdentifier = @"labelCell";
  */
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 3;
+    return 20;
 }
 
 /**
@@ -59,22 +59,61 @@ NSString * const KILabelCellIdentifier = @"labelCell";
     switch (indexPath.row)
     {
         case 0:
-            cell.label.text = @"Lorem ipsum @dolor sit #amet, consectetur adipiscing elit. In sit amet arcu velit. Nam in enim nibh. http://Etiam.sollicitudin.com turpis vel ipsum.";
+            cell.label.text = @"This is a really long @string. It should appear across multiple lines"
+                              @"as long as #autolayout is configured #correctly. There's very little"
+                              @"code to @required to make this work just set the constraints on all"
+                              @"sides of the label, and a high content hugging and compression"
+                              @"resistence priority. Oh and make sure to configure the table with"
+                              @"automatic row heights and a non-zero estimated row height.";
             break;
             
         case 1:
-            cell.label.text = @"Short #tweet";
+            cell.label.text = @"Here's an #emoji, one of the joys of unicode strings! 😈";
             break;
             
         case 2:
-            cell.label.text = @"This just contains an url http://compiledcreations.com";
+            cell.label.text = @"The length of a #KILabel is unrestricted, unlike the length of a"
+                              @"tweet. Tweets are limited to 140 characters, here's long link to"
+                              @"explain why this is the case http://www.adweek.com/socialtimes/the-reason-for-the-160-character-text-message-and-140-character-twitter-length-limits/4914.";
             break;
             
         default:
+            cell.label.text = @"This row has no content!";
             break;
     }
     
+    // Block to handle all our taps, we attach this to all the label's handlers
+    KILinkTapHandler tapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+        [self tappedLink:string cellForRowAtIndexPath:indexPath];
+    };
+    
+    cell.label.userHandleLinkTapHandler = tapHandler;
+    cell.label.urlLinkTapHandler = tapHandler;
+    cell.label.hashtagLinkTapHandler = tapHandler;
+    
     return cell;
+}
+
+/**
+ *  Called when a link is tapped.
+ *
+ *  @param link    The link that was tapped
+ *  @param indexPath Index path of the cell containing the link that was tapped.
+ */
+- (void)tappedLink:(NSString *)link cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString *title = [NSString stringWithFormat:@"Tapped %@", link];
+    NSString *message = [NSString stringWithFormat:@"You tapped %@ in section %@, row %@.",
+                         link,
+                         @(indexPath.section),
+                         @(indexPath.row)];
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 @end
