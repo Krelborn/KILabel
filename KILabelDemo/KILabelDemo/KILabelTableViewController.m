@@ -59,11 +59,11 @@ NSString * const KILabelCellIdentifier = @"labelCell";
     switch (indexPath.row)
     {
         case 0:
-            cell.label.text = @"This is a really long @string. It should appear across multiple lines"
-                              @"as long as #autolayout is configured #correctly. There's very little"
-                              @"code to @required to make this work just set the constraints on all"
-                              @"sides of the label, and a high content hugging and compression"
-                              @"resistence priority. Oh and make sure to configure the table with"
+            cell.label.text = @"This is a really long @string. It should appear across multiple lines "
+                              @"as long as #autolayout is configured #correctly. There's very little "
+                              @"code to @required to make this work just set the constraints on all "
+                              @"sides of the label, and a high content hugging and compression "
+                              @"resistence priority. Oh and make sure to configure the table with "
                               @"automatic row heights and a non-zero estimated row height.";
             break;
             
@@ -72,8 +72,8 @@ NSString * const KILabelCellIdentifier = @"labelCell";
             break;
             
         case 2:
-            cell.label.text = @"The length of a #KILabel is unrestricted, unlike the length of a"
-                              @"tweet. Tweets are limited to 140 characters, here's long link to"
+            cell.label.text = @"The length of a #KILabel is unrestricted, unlike the length of a "
+                              @"tweet. Tweets are limited to 140 characters, here's long link to "
                               @"explain why this is the case http://www.adweek.com/socialtimes/the-reason-for-the-160-character-text-message-and-140-character-twitter-length-limits/4914.";
             break;
             
