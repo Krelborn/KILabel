@@ -69,6 +69,7 @@ NSString * const KILabelLinkKey = @"link";
     {
         [self setupTextSystem];
     }
+    
     return self;
 }
 
@@ -79,6 +80,7 @@ NSString * const KILabelLinkKey = @"link";
     {
         [self setupTextSystem];
     }
+    
     return self;
 }
 
@@ -107,7 +109,7 @@ NSString * const KILabelLinkKey = @"link";
     _automaticLinkDetectionEnabled = YES;
     
     // All links are detectable by default
-    _linkDetectionTypes = KILinkTypeAll;
+    _linkDetectionTypes = KILinkTypeOptionAll;
     
     // Link Type Attributes. Default is empty (no attributes).
     _linkTypeAttributes = [NSMutableDictionary dictionary];
@@ -115,7 +117,9 @@ NSString * const KILabelLinkKey = @"link";
     // Don't underline URL links by default.
     _systemURLStyle = NO;
     
-    _selectedLinkBackgroundColour = nil;//[UIColor colorWithWhite:0.95 alpha:1.0];
+    // By default we hilight the selected link during a touch to give feedback that we are
+    // responding to touch.
+    _selectedLinkBackgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0];
     
     // Establish the text store with our current text
     [self updateTextStoreWithText];
@@ -131,7 +135,7 @@ NSString * const KILabelLinkKey = @"link";
     [self updateTextStoreWithText];
 }
 
-- (void)setLinkDetectionTypes:(KILinkType)linkDetectionTypes
+- (void)setLinkDetectionTypes:(KILinkTypeOption)linkDetectionTypes
 {
     _linkDetectionTypes = linkDetectionTypes;
     
@@ -143,7 +147,9 @@ NSString * const KILabelLinkKey = @"link";
 {
     // Do nothing if we have no text
     if (_textStorage.string.length == 0)
+    {
         return nil;
+    }
     
     // Work out the offset of the text in the view
     CGPoint textOffset;
@@ -169,22 +175,28 @@ NSString * const KILabelLinkKey = @"link";
         NSRange range = [[dictionary objectForKey:KILabelRangeKey] rangeValue];
         
         if ((touchedChar >= range.location) && touchedChar < (range.location + range.length))
+        {
             return dictionary;
+        }
     }
     
     return nil;
 }
 
-// Applies background colour to selected range. Used to hilight touched links
+// Applies background color to selected range. Used to hilight touched links
 - (void)setSelectedRange:(NSRange)range
 {
     // Remove the current selection if the selection is changing
     if (self.selectedRange.length && !NSEqualRanges(self.selectedRange, range))
+    {
         [_textStorage removeAttribute:NSBackgroundColorAttributeName range:self.selectedRange];
+    }
     
     // Apply the new selection to the text
-    if (range.length && _selectedLinkBackgroundColour != nil)
-        [_textStorage addAttribute:NSBackgroundColorAttributeName value:_selectedLinkBackgroundColour range:range];
+    if (range.length && _selectedLinkBackgroundColor != nil)
+    {
+        [_textStorage addAttribute:NSBackgroundColorAttributeName value:_selectedLinkBackgroundColor range:range];
+    }
     
     // Save the new range
     _selectedRange = range;
@@ -207,7 +219,9 @@ NSString * const KILabelLinkKey = @"link";
     // Update our text store with an attributed string based on the original
     // label text properties.
     if (!text)
+    {
         text = @"";
+    }
     
     NSAttributedString *attributedText = [[NSAttributedString alloc] initWithString:text attributes:[self attributesFromProperties]];
     [self updateTextStoreWithAttributedString:attributedText];
@@ -234,7 +248,9 @@ NSString * const KILabelLinkKey = @"link";
     NSDictionary *attributes = _linkTypeAttributes[@(linkType)];
     
     if (!attributes)
+    {
         attributes = @{NSForegroundColorAttributeName : self.tintColor};
+    }
     
     return attributes;
 }
@@ -242,9 +258,13 @@ NSString * const KILabelLinkKey = @"link";
 - (void)setAttributes:(NSDictionary*)attributes forLinkType:(KILinkType)linkType
 {
     if (attributes)
+    {
         _linkTypeAttributes[@(linkType)] = attributes;
+    }
     else
+    {
         [_linkTypeAttributes removeObjectForKey:@(linkType)];
+    }
     
     // Force refresh text
     self.text = self.text;
@@ -256,11 +276,17 @@ NSString * const KILabelLinkKey = @"link";
 {
     // Now update our storage from either the attributedString or the plain text
     if (self.attributedText)
+    {
         [self updateTextStoreWithAttributedString:self.attributedText];
+    }
     else if (self.text)
+    {
         [self updateTextStoreWithAttributedString:[[NSAttributedString alloc] initWithString:self.text attributes:[self attributesFromProperties]]];
+    }
     else
+    {
         [self updateTextStoreWithAttributedString:[[NSAttributedString alloc] initWithString:@"" attributes:[self attributesFromProperties]]];
+    }
     
     [self setNeedsDisplay];
 }
@@ -313,12 +339,16 @@ NSString * const KILabelLinkKey = @"link";
         shadow.shadowColor = nil;
     }
     
-    // Setup colour attributes
-    UIColor *colour = self.textColor;
+    // Setup color attributes
+    UIColor *color = self.textColor;
     if (!self.isEnabled)
-        colour = [UIColor lightGrayColor];
+    {
+        color = [UIColor lightGrayColor];
+    }
     else if (self.isHighlighted)
-        colour = self.highlightedTextColor;
+    {
+        color = self.highlightedTextColor;
+    }
     
     // Setup paragraph attributes
     NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
@@ -326,26 +356,39 @@ NSString * const KILabelLinkKey = @"link";
     
     // Create the dictionary
     NSDictionary *attributes = @{NSFontAttributeName : self.font,
-                                 NSForegroundColorAttributeName : colour,
+                                 NSForegroundColorAttributeName : color,
                                  NSShadowAttributeName : shadow,
                                  NSParagraphStyleAttributeName : paragraph,
                                  };
     return attributes;
 }
 
-// Returns array of ranges for all special words, user handles, hashtags and urls
+/**
+ *  Returns array of ranges for all special words, user handles, hashtags and urls in the specfied
+ *  text.
+ *
+ *  @param text Text to parse for links
+ *
+ *  @return Array of dictionaries describing the links.
+ */
 - (NSArray *)getRangesForLinks:(NSAttributedString *)text
 {
     NSMutableArray *rangesForLinks = [[NSMutableArray alloc] init];
     
-    if (self.linkDetectionTypes & KILinkTypeUserHandle)
+    if (self.linkDetectionTypes & KILinkTypeOptionUserHandle)
+    {
         [rangesForLinks addObjectsFromArray:[self getRangesForUserHandles:text.string]];
+    }
     
-    if (self.linkDetectionTypes & KILinkTypeHashtag)
+    if (self.linkDetectionTypes & KILinkTypeOptionHashtag)
+    {
         [rangesForLinks addObjectsFromArray:[self getRangesForHashtags:text.string]];
+    }
     
-    if (self.linkDetectionTypes & KILinkTypeURL)
+    if (self.linkDetectionTypes & KILinkTypeOptionURL)
+    {
         [rangesForLinks addObjectsFromArray:[self getRangesForURLs:self.attributedText]];
+    }
     
     return rangesForLinks;
 }
@@ -372,10 +415,12 @@ NSString * const KILabelLinkKey = @"link";
         NSString *matchString = [text substringWithRange:matchRange];
         
         if (![self ignoreMatch:matchString])
+        {
             [rangesForUserHandles addObject:@{KILabelLinkTypeKey : @(KILinkTypeUserHandle),
                                               KILabelRangeKey : [NSValue valueWithRange:matchRange],
                                               KILabelLinkKey : matchString
-                                              }];
+                                            }];
+        }
     }
     
     return rangesForUserHandles;
@@ -403,11 +448,12 @@ NSString * const KILabelLinkKey = @"link";
         NSString *matchString = [text substringWithRange:matchRange];
         
         if (![self ignoreMatch:matchString])
+        {
             [rangesForHashtags addObject:@{KILabelLinkTypeKey : @(KILinkTypeHashtag),
                                            KILabelRangeKey : [NSValue valueWithRange:matchRange],
                                            KILabelLinkKey : matchString,
-                                           }];
-        
+                                        }];
+        }
     }
     
     return rangesForHashtags;
@@ -445,7 +491,7 @@ NSString * const KILabelLinkKey = @"link";
                 [rangesForURLs addObject:@{KILabelLinkTypeKey : @(KILinkTypeURL),
                                            KILabelRangeKey : [NSValue valueWithRange:matchRange],
                                            KILabelLinkKey : realURL,
-                                           }];
+                                        }];
             }
         }
     }
@@ -461,8 +507,7 @@ NSString * const KILabelLinkKey = @"link";
 - (NSAttributedString *)addLinkAttributesToAttributedString:(NSAttributedString *)string linkRanges:(NSArray *)linkRanges
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:string];
-    
-    
+
     for (NSDictionary *dictionary in linkRanges)
     {
         NSRange range = [[dictionary objectForKey:KILabelRangeKey] rangeValue];
@@ -470,7 +515,7 @@ NSString * const KILabelLinkKey = @"link";
         
         NSDictionary *attributes = [self attributesForLinkType:linkType];
         
-        // Use our tint colour to hilight the link
+        // Use our tint color to hilight the link
         [attributedString addAttributes:attributes range:range];
         
         // Add an URL attribute if this is a URL
@@ -543,7 +588,9 @@ NSString * const KILabelLinkKey = @"link";
     CGRect textBounds = [_layoutManager boundingRectForGlyphRange:glyphRange inTextContainer:_textContainer];
     CGFloat paddingHeight = (self.bounds.size.height - textBounds.size.height) / 2.0f;
     if (paddingHeight > 0)
+    {
         textOffset.y = paddingHeight;
+    }
     
     return textOffset;
 }
@@ -551,12 +598,14 @@ NSString * const KILabelLinkKey = @"link";
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
+    
     _textContainer.size = self.bounds.size;
 }
 
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
+    
     _textContainer.size = self.bounds.size;
 }
 
@@ -591,9 +640,13 @@ NSString * const KILabelLinkKey = @"link";
     touchedLink = [self linkAtPoint:touchLocation];
     
     if (touchedLink)
+    {
         self.selectedRange = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
+    }
     else
+    {
         [super touchesBegan:touches withEvent:event];
+    }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -611,6 +664,7 @@ NSString * const KILabelLinkKey = @"link";
     if (_isTouchMoved)
     {
         self.selectedRange = NSMakeRange(0, 0);
+        
         return;
     }
     
@@ -645,20 +699,28 @@ NSString * const KILabelLinkKey = @"link";
 
 - (void)receivedActionForLinkType:(KILinkType)linkType string:(NSString*)string range:(NSRange)range
 {
-    if (linkType == KILinkTypeUserHandle)
+    switch (linkType)
     {
-        if (_linkUserHandleTapHandler)
-            _linkUserHandleTapHandler(self, string, range);
-    }
-    else if (linkType == KILinkTypeHashtag)
-    {
-        if (_linkHashtagTapHandler)
-            _linkHashtagTapHandler(self, string, range);
-    }
-    else if (linkType == KILinkTypeURL)
-    {
-        if (_linkURLTapHandler)
-            _linkURLTapHandler(self, string, range);
+    case KILinkTypeUserHandle:
+        if (_userHandleLinkTapHandler)
+        {
+            _userHandleLinkTapHandler(self, string, range);
+        }
+        break;
+        
+    case KILinkTypeHashtag:
+        if (_hashtagLinkTapHandler)
+        {
+            _hashtagLinkTapHandler(self, string, range);
+        }
+        break;
+        
+    case KILinkTypeURL:
+        if (_urlLinkTapHandler)
+        {
+            _urlLinkTapHandler(self, string, range);
+        }
+        break;
     }
 }
 
@@ -687,7 +749,9 @@ NSString * const KILabelLinkKey = @"link";
     NSParagraphStyle *paragraphStyle = [attributedString attribute:NSParagraphStyleAttributeName atIndex:0 effectiveRange:&range];
     
     if (paragraphStyle == nil)
+    {
         return attributedString;
+    }
     
     // Remove the line breaks
     NSMutableParagraphStyle *mutableParagraphStyle = [paragraphStyle mutableCopy];
