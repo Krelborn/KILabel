@@ -1,6 +1,6 @@
 # KILabel
 
-A simple to use drop in replacement for UILabel for iOS 7 that hilights links such as URLs, twitter style usernames and hashtags and makes them tappable.
+A simple to use drop in replacement for UILabel for iOS 7 and above that hilights links such as URLs, twitter style usernames and hashtags and makes them tappable.
 
 <img width=320 src="https://raw.github.com/Krelborn/KILabel/master/IKLabelDemoScreenshot.png" alt="KILabel Screenshot">
 
@@ -13,6 +13,10 @@ KILabel doesn't have any special dependencies so just include the files from KIL
     * Design your user interface as you would normally. In Interface Builder set the custom class for any UILabel you want to replace to KILabel. The label should honour all IB settings. OR
     * Create KILabel objects in code.
 
+As Podspec is also provided so KILabel can be used by added the following line to your project's Podfile.
+
+<pre>pod 'KILabel', '1.0.0'</pre>
+
 You can also use KILabel with Swift. Just include compile the files in your XCode project in the usual way but add the following line to your Objective-C Bridging Header.
 
 ``` objective-c
@@ -20,7 +24,7 @@ You can also use KILabel with Swift. Just include compile the files in your XCod
 ```
 
 ## Things to know
-* To handle taps on links you attach a block to the label's linkTapHandler property (See sample code).
+* To handle taps on links attach a block to one of the label's tap handler properties (See sample code).
 * Usernames and hashtag links are coloured using the label's **tint** property. This can be configured through IB.
 * URLs are attributed using the **NSLinkAttributeName** and are displayed accordingly.
 * It should be possible to use either the label's **text** or **attributedText** properties to set the label content.
@@ -28,7 +32,7 @@ You can also use KILabel with Swift. Just include compile the files in your XCod
 * The link hilighting and interaction can be enabled/disabled using the **automaticLinkDetectionEnabled** property.
 * The constructor always sets *userInteractionEnabled* to YES. If you subsequently set it NO you will lose the ability to interact with links even it **automaticLinkDetectionEnabled** is set to YES.
 * Use the **linkAtPoint** method to find out if there is link text at a point in the label's coordinate system. This returns nil if there is no link at the location, otherwise returns a dictionary with the following keys:
-    * *linkType* a TDLinkType value that identifies the type of link
+    * *linkType* a KILinkType value that identifies the type of link
     * *range* an NSRange that gives the range of the link within the label's text
     * *link* an NSString containing the raw text of the link
 * Use the *linkDetectionTypes* property to select the type of link you want tappable
@@ -92,6 +96,8 @@ Repository includes KILabelDemo written in Objective-C that shows a simple use o
 
 The demo also demonstrates how to use a gesture recognizer with the label to implement a long press on a link, which uses the **linkAtPoint** method.
 
+There's also an example using a UITableView where cells are given dynamic heights depending on the content.
+
 ## License & Credits
 
 KILabel is available under the MIT license.
@@ -100,7 +106,9 @@ KILabel was inspired by STTweetLabel (http://github.com/SebastienThiebaud) and o
 
 ## Contact
 
-Please get in touch with any comments or report any bugs through the obvious channels.
+Open an issue to report bugs or request a feature.
+
+Any otherfeedback welcome through the obvious channels.
 
 - http://compiledcreations.com
 - http://twitter.com/krelborn
