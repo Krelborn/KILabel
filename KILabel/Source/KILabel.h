@@ -60,6 +60,7 @@ extern NSString * const KILabelLinkKey;
 /**
  * Smart UILabel subclass that detects links, hashtags and usernames.
  **/
+IB_DESIGNABLE
 @interface KILabel : UILabel <NSLayoutManagerDelegate>
 
 /** ****************************************************************************************** **
@@ -69,12 +70,12 @@ extern NSString * const KILabelLinkKey;
 /**
  * Automatic detection of links, hashtags and usernames.
  **/
-@property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) BOOL automaticLinkDetectionEnabled;
+@property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) IBInspectable BOOL automaticLinkDetectionEnabled;
 
 /**
  * The combination of link types to detect. Default value is KILinkTypeAll.
  **/
-@property (nonatomic, assign) KILinkTypeOption linkDetectionTypes;
+@property (nonatomic, assign) IBInspectable KILinkTypeOption linkDetectionTypes;
 
 /**
  * Set containing words to be ignored as links, hashtags or usernames.
@@ -89,12 +90,12 @@ extern NSString * const KILabelLinkKey;
 /**
  * Color used to highlight selected link background. Default value is (0.95, 0.95, 0.95, 1.0).
  **/
-@property (nullable, nonatomic, copy) UIColor *selectedLinkBackgroundColor;
+@property (nullable, nonatomic, copy) IBInspectable UIColor *selectedLinkBackgroundColor;
 
 /**
  * Flag to use the sytem format for URLs (underlined + blue color). Default value is NO.
  **/
-@property (nonatomic, assign) BOOL systemURLStyle;
+@property (nonatomic, assign) IBInspectable BOOL systemURLStyle;
 
 /**
  * Get the current attributes for the given link type.
