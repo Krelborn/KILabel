@@ -27,30 +27,68 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Constants for identifying link types we can detect
+/**
+ *  Constants for identifying link types we can detect
+ */
 typedef NS_ENUM(NSUInteger, KILinkType)
 {
+    /**
+     *  Usernames starting with "@" token
+     */
     KILinkTypeUserHandle,
+    
+    /**
+     *  Hashtags starting with "#" token
+     */
     KILinkTypeHashtag,
+    
+    /**
+     *  URLs, http etc
+     */
     KILinkTypeURL,
 };
 
-// Flags for specifying combinations of link types as a bitmask
+/**
+ *  Flags for specifying combinations of link types as a bitmask
+ */
 typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
 {
-    KILinkTypeOptionNone         = 0,
+    /**
+     *  No links
+     */
+    KILinkTypeOptionNone = 0,
     
-    KILinkTypeOptionUserHandle   = 1 << KILinkTypeUserHandle,
-    KILinkTypeOptionHashtag      = 1 << KILinkTypeHashtag,
-    KILinkTypeOptionURL          = 1 << KILinkTypeURL,
+    /**
+     *  Specifies to include KILinkTypeUserHandle links
+     */
+    KILinkTypeOptionUserHandle = 1 << KILinkTypeUserHandle,
     
-    KILinkTypeOptionAll          = NSUIntegerMax,
+    /**
+     *  Specifies to include KILinkTypeHashtag links
+     */
+    KILinkTypeOptionHashtag = 1 << KILinkTypeHashtag,
+    
+    /**
+     *  Specifies to include KILinkTypeURL links
+     */
+    KILinkTypeOptionURL = 1 << KILinkTypeURL,
+    
+    /**
+     *  Convenience contstant to include all link types
+     */
+    KILinkTypeOptionAll = NSUIntegerMax,
 };
 
 
 @class KILabel;
 
-// Block method that is called when an interactive word is touched
+/**
+ *  Type for block that is called when a link is tapped
+ *
+ *  @param label  The KILabel in which the tap took place
+ *  @param string Content of the link that was tapped, includes @ or # tokens
+ *  @param range  The range of the string within the label's text
+ */
 typedef void (^KILinkTapHandler)(KILabel *label, NSString *string, NSRange range);
 
 extern NSString * const KILabelLinkTypeKey;
@@ -58,7 +96,8 @@ extern NSString * const KILabelRangeKey;
 extern NSString * const KILabelLinkKey;
 
 /**
- * Smart UILabel subclass that detects links, hashtags and usernames.
+ * A UILabel subclass that highlights links, hashtags and usernames and enables response to user
+ * interactions with those links.
  **/
 IB_DESIGNABLE
 @interface KILabel : UILabel <NSLayoutManagerDelegate>
@@ -68,19 +107,20 @@ IB_DESIGNABLE
  ** ****************************************************************************************** **/
 
 /**
- * Automatic detection of links, hashtags and usernames.
- **/
+ * Enable/disable automatic detection of links, hashtags and usernames.
+ */
 @property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) IBInspectable BOOL automaticLinkDetectionEnabled;
 
 /**
- * The combination of link types to detect. Default value is KILinkTypeAll.
- **/
+ * Specifies the combination of link types to detect. Default value is KILinkTypeAll.
+ */
 @property (nonatomic, assign) IBInspectable KILinkTypeOption linkDetectionTypes;
 
 /**
  * Set containing words to be ignored as links, hashtags or usernames.
+ *
  * @discussion The comparison between the matches and the ignored words is case insensitive.
- **/
+ */
 @property (nullable, nonatomic, strong) NSSet *ignoredKeywords;
 
 /** ****************************************************************************************** **
@@ -88,13 +128,15 @@ IB_DESIGNABLE
  ** ****************************************************************************************** **/
 
 /**
- * Color used to highlight selected link background. Default value is (0.95, 0.95, 0.95, 1.0).
- **/
+ * The color used to highlight selected link background.
+ *
+ * @discussion The default value is (0.95, 0.95, 0.95, 1.0).
+ */
 @property (nullable, nonatomic, copy) IBInspectable UIColor *selectedLinkBackgroundColor;
 
 /**
- * Flag to use the sytem format for URLs (underlined + blue color). Default value is NO.
- **/
+ * Flag sets if the sytem appearance for URLs should be used (underlined + blue color). Default value is NO.
+ */
 @property (nonatomic, assign) IBInspectable BOOL systemURLStyle;
 
 /**
@@ -102,8 +144,8 @@ IB_DESIGNABLE
  *
  * @param linkType The link type to get the attributes.
  * @return A dictionary of text attributes.
- * @discussion Default attributes contain colored font using the tintColor color property
- **/
+ * @discussion Default attributes contain colored font using the tintColor color property.
+ */
 - (nullable NSDictionary*)attributesForLinkType:(KILinkType)linkType;
 
 /**
@@ -112,7 +154,7 @@ IB_DESIGNABLE
  * @param attributes The text attributes.
  * @param linkType The link type.
  * @discussion Default attributes contain colored font using the tintColor color property.
- **/
+ */
 - (void)setAttributes:(nullable NSDictionary*)attributes forLinkType:(KILinkType)linkType;
 
 /** ****************************************************************************************** **
@@ -126,12 +168,12 @@ IB_DESIGNABLE
 
 /**
  * Callback block for KILinkTypeHashtag link tap.
- **/
+ */
 @property (nullable, nonatomic, copy) KILinkTapHandler hashtagLinkTapHandler;
 
 /**
  * Callback block for KILinkTypeURL link tap.
- **/
+ */
 @property (nullable, nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
 
 /** ****************************************************************************************** **
@@ -139,16 +181,17 @@ IB_DESIGNABLE
  ** ****************************************************************************************** **/
 
 /**
- * Returns a dictionary of data about the link that it at the location. Returns nil if there is no link. 
+ * Returns a dictionary of data about the link that it at the location. Returns nil if there is no link.
  *
  * A link dictionary contains the following keys:
- *     KILabelLinkTypeKey: a TDLinkType that identifies the type of link.
- *     KILabelRangeKey: the range of the link within the label text.
- *     KILabelLinkKey: the link text. This could be an URL, handle or hashtag depending on the linkType value.
+ *
+ * - **KILabelLinkTypeKey**, a TDLinkType that identifies the type of link.
+ * - **KILabelRangeKey**, the range of the link within the label text.
+ * - **KILabelLinkKey**, the link text. This could be an URL, handle or hashtag depending on the linkType value.
  *
  * @param point The point in the coordinates of the label view.
  * @return A dictionary containing the link.
- **/
+ */
 - (nullable NSDictionary*)linkAtPoint:(CGPoint)point;
 
 @end
