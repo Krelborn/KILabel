@@ -1,6 +1,6 @@
 # KILabel
 
-A simple to use drop in replacement for UILabel for iOS 7 and above that hilights links such as URLs, twitter style usernames and hashtags and makes them tappable.
+A simple to use drop in replacement for UILabel for iOS 7 and above that highlights links such as URLs, twitter style usernames and hashtags and makes them touchable.
 
 <img width=320 src="https://raw.github.com/Krelborn/KILabel/master/IKLabelDemoScreenshot.png" alt="KILabel Screenshot">
 
@@ -10,14 +10,14 @@ KILabel doesn't have any special dependencies so just include the files from KIL
 1. Download the latest source.
 2. Add the files KILabel.m and KILabel.h to your project.
 3. Either:-
-    * Design your user interface as you would normally. In Interface Builder set the custom class for any UILabel you want to replace to KILabel. The label should honour all IB settings. OR
+    * Design your user interface as you would normally. In Interface Builder set the custom class for any UILabel you want to replace to KILabel. The label should honor all IB settings. OR
     * Create KILabel objects in code.
 
 As Podspec is also provided so KILabel can be used by added the following line to your project's Podfile.
 
 <pre>pod 'KILabel', '1.0.0'</pre>
 
-You can also use KILabel with Swift. Just include compile the files in your XCode project in the usual way but add the following line to your Objective-C Bridging Header.
+You can also use KILabel with Swift. Just compile the files into your XCode project in the usual way but add the following line to your Objective-C Bridging Header.
 
 ``` objective-c
 #import "KILabel.h"
@@ -25,22 +25,22 @@ You can also use KILabel with Swift. Just include compile the files in your XCod
 
 ## Things to know
 * To handle taps on links attach a block to one of the label's tap handler properties (See sample code).
-* Usernames and hashtag links are coloured using the label's **tint** property. This can be configured through IB.
+* Usernames and hashtag links are colored using the label's **tint** property. This can be configured through IB.
 * URLs are attributed using the **NSLinkAttributeName** and are displayed accordingly.
 * It should be possible to use either the label's **text** or **attributedText** properties to set the label content.
-* When using the **attributedText** property, KILabel will attempt to preserve the original attributes as much as possilbe. If you see any problems with this let me know.
-* The link hilighting and interaction can be enabled/disabled using the **automaticLinkDetectionEnabled** property.
+* When using the **attributedText** property, KILabel will attempt to preserve the original attributes as much as possible. If you see any problems with this let me know.
+* The link highlighting and interaction can be enabled/disabled using the **automaticLinkDetectionEnabled** property.
 * The constructor always sets *userInteractionEnabled* to YES. If you subsequently set it NO you will lose the ability to interact with links even it **automaticLinkDetectionEnabled** is set to YES.
 * Use the **linkAtPoint** method to find out if there is link text at a point in the label's coordinate system. This returns nil if there is no link at the location, otherwise returns a dictionary with the following keys:
     * *linkType* a KILinkType value that identifies the type of link
     * *range* an NSRange that gives the range of the link within the label's text
     * *link* an NSString containing the raw text of the link
-* Use the *linkDetectionTypes* property to select the type of link you want tappable
-* If you attach attributedText with existing links attached, they will be preserved, but only tappable if URL detection is enabled. This is handy for manually cleaning up displayed URLs while preserving the original link behind the scenes.
+* Use the *linkDetectionTypes* property to select the type of link you want touchable by combining KILinkTypeOption bitmasks.
+* If you attach attributedText with existing links attached, they will be preserved, but only touchable if URL detection is enabled. This is handy for manually cleaning up displayed URLs while preserving the original link behind the scenes.
 
 ## A bit of sample code
 
-The code snippet below show's how to setup a label with a tap handling block. A more complete example can be seen in the KILabelDemo project included in the repository.
+The code snippet below shows how to setup a label with a tap handling block. A more complete example can be seen in the KILabelDemo project included in the repository.
 
 ``` objective-c
 // Create the label, you can do this in Interface Builder as well
@@ -92,7 +92,7 @@ view.addSubview(label)
 
 ## Demo
 
-Repository includes KILabelDemo written in Objective-C that shows a simple use of the label in a storyboard with examples for implementing tappable links.
+The repository includes KILabelDemo, written in Objective-C, that shows a simple use of the label in a storyboard with examples for implementing touchable links.
 
 The demo also demonstrates how to use a gesture recognizer with the label to implement a long press on a link, which uses the **linkAtPoint** method.
 
