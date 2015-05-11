@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C964A75C1B00B1B600E93DF0 /* KICustomLabelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C964A75B1B00B1B600E93DF0 /* KICustomLabelViewController.m */; };
 		C97DB2EE183A56EF0028EA5C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2ED183A56EF0028EA5C /* Foundation.framework */; };
 		C97DB2F0183A56EF0028EA5C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2EF183A56EF0028EA5C /* CoreGraphics.framework */; };
 		C97DB2F2183A56EF0028EA5C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2F1183A56EF0028EA5C /* UIKit.framework */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C964A75A1B00B1B600E93DF0 /* KICustomLabelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KICustomLabelViewController.h; sourceTree = "<group>"; };
+		C964A75B1B00B1B600E93DF0 /* KICustomLabelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KICustomLabelViewController.m; sourceTree = "<group>"; };
 		C97DB2EA183A56EF0028EA5C /* KILabelDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KILabelDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97DB2ED183A56EF0028EA5C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C97DB2EF183A56EF0028EA5C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -137,6 +140,8 @@
 				C97DB303183A56EF0028EA5C /* KIViewController.m */,
 				C97DB305183A56EF0028EA5C /* Images.xcassets */,
 				C97DB2F4183A56EF0028EA5C /* Supporting Files */,
+				C964A75A1B00B1B600E93DF0 /* KICustomLabelViewController.h */,
+				C964A75B1B00B1B600E93DF0 /* KICustomLabelViewController.m */,
 			);
 			path = KILabelDemo;
 			sourceTree = "<group>";
@@ -277,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C964A75C1B00B1B600E93DF0 /* KICustomLabelViewController.m in Sources */,
 				C97DB325183A57110028EA5C /* KILabel.m in Sources */,
 				C97DB304183A56EF0028EA5C /* KIViewController.m in Sources */,
 				C9ABA08D1AEE5BAC00363407 /* KILabelTableViewCell.m in Sources */,
