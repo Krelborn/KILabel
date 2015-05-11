@@ -90,6 +90,25 @@ label.urlLinkTapHandler = { label, url, range in
 view.addSubview(label)
 ```
 
+## Custom Links
+
+As well as the builtin link types, KILabel allows you to add custom link types using Link Classifiers. The KILabelLinkClassifier class is used to specfiy link detection, tap handling and the attributes used when displaying link text.
+
+The KILabelLinkClassifer class provides a convenience method for creating a classifier that works with a regular expression (NSRegularExpression). The NSDataDetector class provided by UIKit can be used in conjunction with this to easily extend KILabel to support dates, phone numbers and other links with just a couple of lines of code.
+
+``` objective-c
+NSError *error = nil;
+NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeDate error:&error];
+KILabelLinkClassifier *classifier = [KILabelLinkClassifier linkClassifierWithRegex:detector];
+```
+When working with link classifiers, tap handlers are attached directly to the classifier's **tapHandler** property.
+
+### Tips for working classifiers
+
+- Regex is the preferred detection method. It should cover most situation so take advantage of **linkClassifierWithRegex:**
+- Keep classifier's stateless. Consider the classifier to be immutable when your blocks are called.
+- Don't modify the label in your classifier block. When parsing text for links consider the label object to be immutable. Certainly don't change the text! 
+
 ## Demo
 
 The repository includes KILabelDemo, written in Objective-C, that shows a simple use of the label in a storyboard with examples for implementing touchable links.
