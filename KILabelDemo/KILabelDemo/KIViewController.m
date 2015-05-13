@@ -147,11 +147,11 @@
 {
     if (sender.isOn)
     {
-        self.label.linkDetectionTypes |= KILinkTypeURL;
+        self.label.linkDetectionTypes |= KILinkTypeOptionURL;
     }
     else
     {
-        self.label.linkDetectionTypes ^= KILinkTypeURL;
+        self.label.linkDetectionTypes ^= KILinkTypeOptionURL;
     }
 }
 
@@ -164,11 +164,11 @@
 {
     if (sender.isOn)
     {
-        self.label.linkDetectionTypes |= KILinkTypeUserHandle;
+        self.label.linkDetectionTypes |= KILinkTypeOptionUserHandle;
     }
     else
     {
-        self.label.linkDetectionTypes ^= KILinkTypeUserHandle;
+        self.label.linkDetectionTypes ^= KILinkTypeOptionUserHandle;
     }
 }
 
@@ -181,11 +181,11 @@
 {
     if (sender.isOn)
     {
-        self.label.linkDetectionTypes |= KILinkTypeHashtag;
+        self.label.linkDetectionTypes |= KILinkTypeOptionHashtag;
     }
     else
     {
-        self.label.linkDetectionTypes ^= KILinkTypeHashtag;
+        self.label.linkDetectionTypes ^= KILinkTypeOptionHashtag;
     }
 }
 
