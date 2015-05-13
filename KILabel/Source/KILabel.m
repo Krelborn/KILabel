@@ -556,6 +556,28 @@ NSString * const KILabelClassifierKey = @"classifier";
     [self updateTextStoreWithText];
 }
 
+- (KILabelLinkClassifier *)linkClassifierWithTag:(NSInteger)tag
+{
+    for (KILabelLinkClassifier *classifier in _linkClassifiers)
+    {
+        // Only return if the tag matches and its not one of our built in ones.
+        if ((classifier.tag == tag) && [self isCustomClassifier:classifier])
+        {
+            return classifier;
+        }
+    }
+    
+    return nil;
+}
+
+- (BOOL)isCustomClassifier:(KILabelLinkClassifier *)classifier
+{
+    return (classifier != _userHandleClassifier) &&
+           (classifier != _hashtagClassifier) &&
+           (classifier != _urlClassifier);
+}
+
+
 - (BOOL)ignoreMatch:(NSString*)string
 {
     return [_ignoredKeywords containsObject:[string lowercaseString]];

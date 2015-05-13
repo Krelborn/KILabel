@@ -228,6 +228,19 @@ IB_DESIGNABLE
 - (void)removeLinkClassifier:(KILabelLinkClassifier *)classifier;
 
 /**
+ *  Finds the first link classifier with the specified tag.
+ *
+ *  Useful for modifiying classifiers after attached to the label. Using tags means you can avoid
+ *  holding on to references to the objects. Will only return the first instance with the tag, 
+ *  there's no restrictions on tags being unique so it's up to the developer to manage this.
+ *
+ *  @param tag Tag used to match classifier
+ *
+ *  @return KILabelLinkClassifier with tag or nil if no classifier exists.
+ */
+- (KILabelLinkClassifier *)linkClassifierWithTag:(NSInteger)tag;
+
+/**
  * @name Geometry
  **/
 
