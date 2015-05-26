@@ -25,27 +25,61 @@
 
 #import <XCTest/XCTest.h>
 
-@interface KILabelDemoTests : XCTestCase
+#import "KILabel.h"
 
+
+@interface KILabelClassifierTests : XCTestCase
+{
+    KILabel *label;
+}
 @end
 
-@implementation KILabelDemoTests
+@implementation KILabelClassifierTests
 
 - (void)setUp
 {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+
+    label = [[KILabel alloc] initWithFrame:CGRectMake(0, 0, 256, 23)];
 }
 
 - (void)tearDown
 {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    label = nil;
+    
     [super tearDown];
 }
 
-- (void)testExample
+- (void)testLinkClassifierWithTag_tagIs0_returnsNil
 {
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+    KILabelLinkClassifier *classifier = [label linkClassifierWithTag:0];
+    XCTAssertNil(classifier);
 }
+
+- (void)testLinkClassifierWithTag_tagIs0_returnsClassifier
+{
+    KILabelLinkClassifier *classifier = [[KILabelLinkClassifier alloc] init];
+    [label addLinkClassifier:classifier];
+    XCTAssertEqual([label linkClassifierWithTag:0], classifier);
+}
+
+- (void)testLinkClassifierWithTag_tagIs0_classifierHasTag1_returnsNil
+{
+    KILabelLinkClassifier *classifier = [[KILabelLinkClassifier alloc] init];
+    [label addLinkClassifier:classifier];
+    XCTAssertNil([label linkClassifierWithTag:1]);
+}
+
+- (void)testLinkClassifierWithTag_tagIs1_classifierHasTag1AddedThenRemoved_returnsNil
+{
+    KILabelLinkClassifier *classifier = [[KILabelLinkClassifier alloc] init];
+    classifier.tag = 1;
+    [label addLinkClassifier:classifier];
+    XCTAssertEqual([label linkClassifierWithTag:1], classifier);
+    
+    [label removeLinkClassifier:classifier];
+    XCTAssertNil([label linkClassifierWithTag:1]);
+}
+
 
 @end

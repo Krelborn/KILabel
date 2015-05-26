@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C964A75C1B00B1B600E93DF0 /* KICustomLabelViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C964A75B1B00B1B600E93DF0 /* KICustomLabelViewController.m */; };
 		C97DB2EE183A56EF0028EA5C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2ED183A56EF0028EA5C /* Foundation.framework */; };
 		C97DB2F0183A56EF0028EA5C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2EF183A56EF0028EA5C /* CoreGraphics.framework */; };
 		C97DB2F2183A56EF0028EA5C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2F1183A56EF0028EA5C /* UIKit.framework */; };
@@ -20,7 +21,7 @@
 		C97DB30E183A56F00028EA5C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2ED183A56EF0028EA5C /* Foundation.framework */; };
 		C97DB30F183A56F00028EA5C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB2F1183A56EF0028EA5C /* UIKit.framework */; };
 		C97DB317183A56F00028EA5C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C97DB315183A56F00028EA5C /* InfoPlist.strings */; };
-		C97DB319183A56F00028EA5C /* KILabelDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C97DB318183A56F00028EA5C /* KILabelDemoTests.m */; };
+		C97DB319183A56F00028EA5C /* KILabelClassifierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C97DB318183A56F00028EA5C /* KILabelClassifierTests.m */; };
 		C97DB325183A57110028EA5C /* KILabel.m in Sources */ = {isa = PBXBuildFile; fileRef = C97DB324183A57110028EA5C /* KILabel.m */; };
 		C97DB327183A59670028EA5C /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB326183A59670028EA5C /* MessageUI.framework */; };
 		C9ABA08A1AEE5A8600363407 /* KILabelTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C964A75A1B00B1B600E93DF0 /* KICustomLabelViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KICustomLabelViewController.h; sourceTree = "<group>"; };
+		C964A75B1B00B1B600E93DF0 /* KICustomLabelViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KICustomLabelViewController.m; sourceTree = "<group>"; };
 		C97DB2EA183A56EF0028EA5C /* KILabelDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KILabelDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97DB2ED183A56EF0028EA5C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C97DB2EF183A56EF0028EA5C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -56,7 +59,7 @@
 		C97DB30C183A56F00028EA5C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		C97DB314183A56F00028EA5C /* KILabelDemoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KILabelDemoTests-Info.plist"; sourceTree = "<group>"; };
 		C97DB316183A56F00028EA5C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		C97DB318183A56F00028EA5C /* KILabelDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KILabelDemoTests.m; sourceTree = "<group>"; };
+		C97DB318183A56F00028EA5C /* KILabelClassifierTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KILabelClassifierTests.m; sourceTree = "<group>"; };
 		C97DB323183A57110028EA5C /* KILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KILabel.h; path = ../KILabel/Source/KILabel.h; sourceTree = "<group>"; };
 		C97DB324183A57110028EA5C /* KILabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KILabel.m; path = ../KILabel/Source/KILabel.m; sourceTree = "<group>"; };
 		C97DB326183A59670028EA5C /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
@@ -137,6 +140,8 @@
 				C97DB303183A56EF0028EA5C /* KIViewController.m */,
 				C97DB305183A56EF0028EA5C /* Images.xcassets */,
 				C97DB2F4183A56EF0028EA5C /* Supporting Files */,
+				C964A75A1B00B1B600E93DF0 /* KICustomLabelViewController.h */,
+				C964A75B1B00B1B600E93DF0 /* KICustomLabelViewController.m */,
 			);
 			path = KILabelDemo;
 			sourceTree = "<group>";
@@ -155,7 +160,7 @@
 		C97DB312183A56F00028EA5C /* KILabelDemoTests */ = {
 			isa = PBXGroup;
 			children = (
-				C97DB318183A56F00028EA5C /* KILabelDemoTests.m */,
+				C97DB318183A56F00028EA5C /* KILabelClassifierTests.m */,
 				C97DB313183A56F00028EA5C /* Supporting Files */,
 			);
 			path = KILabelDemoTests;
@@ -277,6 +282,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C964A75C1B00B1B600E93DF0 /* KICustomLabelViewController.m in Sources */,
 				C97DB325183A57110028EA5C /* KILabel.m in Sources */,
 				C97DB304183A56EF0028EA5C /* KIViewController.m in Sources */,
 				C9ABA08D1AEE5BAC00363407 /* KILabelTableViewCell.m in Sources */,
@@ -290,7 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C97DB319183A56F00028EA5C /* KILabelDemoTests.m in Sources */,
+				C97DB319183A56F00028EA5C /* KILabelClassifierTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

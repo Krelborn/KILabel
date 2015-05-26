@@ -81,6 +81,7 @@ typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
 
 
 @class KILabel;
+@class KILabelLinkClassifier;
 
 /**
  *  Type for block that is called when a link is tapped
@@ -91,9 +92,41 @@ typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
  */
 typedef void (^KILinkTapHandler)(KILabel *label, NSString *string, NSRange range);
 
+/**
+ *  Type for block that identifies and returns a list of links for the specified label
+ *
+ *  @param label Label requesting links
+ *
+ *  @return Array of Link Descriptor dictionaries
+ */
+typedef NSArray * __nonnull (^KILinkClassifier)(KILabel *label);
+
+/**
+ *  @name Link Descriptors
+ *
+ *  Currently a link descriptor is just an NSDictionary containing the keys below. Link descriptors
+ *  identify individual links within the labels text.
+ */
+
+/**
+ *  Key used to store KILinkType in a link descriptor dictionary
+ */
 extern NSString * const KILabelLinkTypeKey;
+
+/**
+ *  Key used to store NSRange for a link in a link descriptor dictionary
+ */
 extern NSString * const KILabelRangeKey;
+
+/**
+ *  Key used to store a copy of the original text that the link represents
+ */
 extern NSString * const KILabelLinkKey;
+
+/**
+ *  Key used to associate classifier with the link it generated
+ */
+extern NSString * const KILabelClassifierKey;
 
 /**
  * A UILabel subclass that highlights links, hashtags and usernames and enables response to user
@@ -102,9 +135,9 @@ extern NSString * const KILabelLinkKey;
 IB_DESIGNABLE
 @interface KILabel : UILabel <NSLayoutManagerDelegate>
 
-/** ****************************************************************************************** **
+/**
  * @name Setting the link detector
- ** ****************************************************************************************** **/
+ **/
 
 /**
  * Enable/disable automatic detection of links, hashtags and usernames.
@@ -112,7 +145,7 @@ IB_DESIGNABLE
 @property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) IBInspectable BOOL automaticLinkDetectionEnabled;
 
 /**
- * Specifies the combination of link types to detect. Default value is KILinkTypeAll.
+ * Specifies the combination of link types to detect. Default value is KILinkTypeOptionAll.
  */
 @property (nonatomic, assign) IBInspectable KILinkTypeOption linkDetectionTypes;
 
@@ -123,9 +156,9 @@ IB_DESIGNABLE
  */
 @property (nullable, nonatomic, strong) NSSet *ignoredKeywords;
 
-/** ****************************************************************************************** **
+/**
  * @name Format & Appearance
- ** ****************************************************************************************** **/
+ **/
 
 /**
  * The color used to highlight selected link background.
@@ -157,9 +190,9 @@ IB_DESIGNABLE
  */
 - (void)setAttributes:(nullable NSDictionary*)attributes forLinkType:(KILinkType)linkType;
 
-/** ****************************************************************************************** **
+/**
  * @name Callbacks
- ** ****************************************************************************************** **/
+ **/
 
 /**
  * Callback block for KILinkTypeUserHandle link tap.
@@ -176,9 +209,40 @@ IB_DESIGNABLE
  */
 @property (nullable, nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
 
-/** ****************************************************************************************** **
+/**
+ *  @name Classifiers
+ */
+
+/**
+ *  Adds a link classifier, which will detect links and optionally handle taps.
+ *
+ *  @param classifier KILinkClassifier block (see documentation)
+ */
+- (void)addLinkClassifier:(KILabelLinkClassifier *)classifier;
+
+/**
+ *  Removes a link classifier, it will no longer detect links or handle taps.
+ *
+ *  @param classifier KILabelLinkClassifer to remove
+ */
+- (void)removeLinkClassifier:(KILabelLinkClassifier *)classifier;
+
+/**
+ *  Finds the first link classifier with the specified tag.
+ *
+ *  Useful for modifiying classifiers after attached to the label. Using tags means you can avoid
+ *  holding on to references to the objects. Will only return the first instance with the tag, 
+ *  there's no restrictions on tags being unique so it's up to the developer to manage this.
+ *
+ *  @param tag Tag used to match classifier
+ *
+ *  @return KILabelLinkClassifier with tag or nil if no classifier exists.
+ */
+- (KILabelLinkClassifier *)linkClassifierWithTag:(NSInteger)tag;
+
+/**
  * @name Geometry
- ** ****************************************************************************************** **/
+ **/
 
 /**
  * Returns a dictionary of data about the link that it at the location. Returns nil if there is no link.
@@ -193,6 +257,68 @@ IB_DESIGNABLE
  * @return A dictionary containing the link.
  */
 - (nullable NSDictionary*)linkAtPoint:(CGPoint)point;
+
+@end
+
+#pragma mark - KILabelLinkClassifier
+
+/**
+ *  KILabelLinkClassifier objects can be attached to KILabel instances. They define a link detector
+ *  associated with a touch handler callback.
+ */
+@interface KILabelLinkClassifier: NSObject
+
+/**
+ *  An application defined tag. Useful for managing classifiers without having to hold on to 
+ *  references to their instances.
+ */
+@property NSInteger tag;
+
+/**
+ *  Block used to detect links for the label. If this is nil the classifier won't do anything.
+ */
+@property (nullable, nonatomic, copy) KILinkClassifier classifier;
+
+/**
+ *  Block called when a link detected by the classifier is tapped. Leave nil if you don't want to
+ *  handle taps.
+ */
+@property (nullable, nonatomic, copy) KILinkTapHandler tapHandler;
+
+/**
+ *  The attributes for the links attributes string
+ */
+@property (nullable, nonatomic, copy) NSDictionary *linkAttributes;
+
+/**
+ *  Create a new instance of KILabelLinkClassifer with the given classifier block
+ *
+ *  @param classifier Block that will used to classify links in the parent label
+ *
+ *  @return Instance of KILabelLinkClassifier
+ */
+- (instancetype)initWithClassifier:(KILinkClassifier)classifier;
+
+/**
+ *  Create a new instance of KILabelLinkClassifier that will use the given regex for classifying
+ *
+ *  @param regex Regex used to match strings for links
+ *
+ *  @return Instance of KILabelLinkClassifier
+ */
++ (instancetype)linkClassifierWithRegex:(NSRegularExpression *)regex;
+
+/**
+ *  Helper method for extracting the string to use as the "link" from an attributed string. The
+ *  plain text matching the range will be used, unless an NSLinkAttributedName property is present.
+ *  See linkClassifierWithRegex: for an example.
+ *
+ *  @param attrStr String to extract link from
+ *  @param range   Range of characters for the link in the plain text of the string
+ *
+ *  @return String to use a link string.
+ */
++ (NSString *)linkStringFromAttributedString:(NSAttributedString *)attrStr withRange:(NSRange)range;
 
 @end
 
