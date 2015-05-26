@@ -15,7 +15,7 @@ KILabel doesn't have any special dependencies so just include the files from KIL
 
 As Podspec is also provided so KILabel can be used by added the following line to your project's Podfile.
 
-<pre>pod 'KILabel', '1.0.0'</pre>
+<pre>pod 'KILabel'</pre>
 
 You can also use KILabel with Swift. Just compile the files into your XCode project in the usual way but add the following line to your Objective-C Bridging Header.
 
