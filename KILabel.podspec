@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "KILabel"
-  s.version      = "1.0.0"
+  s.version      = "1.0.1"
   s.summary      = "Replacement for UILabel for iOS 7 and 8 that provides automatic detection of links such as URLs, twitter style usernames and hashtags."
 
   s.description  = <<-DESC
@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
 
   s.platform     = :ios, "7.0"
 
-  s.source       = { :git => "https://github.com/Krelborn/KILabel.git", :tag => "1.0.0" }
+  s.source       = { :git => "https://github.com/Krelborn/KILabel.git", :tag => "1.0.1" }
 
   s.source_files  = "KILabel/Source/**/*.{h,m}"
   public_header_files = "KILabel/Source/**/*.h"
