@@ -578,11 +578,6 @@ NSString * const KILabelClassifierKey = @"classifier";
     return links;
 }
 
-- (BOOL)ignoreMatch:(NSString*)string
-{
-    return [_ignoredKeywords containsObject:[string lowercaseString]];
-}
-
 - (NSAttributedString *)addLinkAttributesToAttributedString:(NSAttributedString *)string linkRanges:(NSArray *)linkRanges
 {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:string];
@@ -867,7 +862,8 @@ NSString * const KILabelClassifierKey = @"classifier";
             NSString *matchString = [KILabelLinkClassifier linkStringFromAttributedString:label.attributedText
                                                                                 withRange:matchRange];
 
-            if (![label ignoreMatch:matchString])
+            // Add the link if its not in our ignore list
+            if (![label.ignoredKeywords containsObject:[matchString lowercaseString]])
             {
                 [rangesForUserHandles addObject:@{KILabelRangeKey : [NSValue valueWithRange:matchRange],
                                                   KILabelLinkKey : matchString
