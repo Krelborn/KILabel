@@ -13,7 +13,7 @@ KILabel doesn't have any special dependencies so just include the files from KIL
     * Design your user interface as you would normally. In Interface Builder set the custom class for any UILabel you want to replace to KILabel. The label should honor all IB settings. OR
     * Create KILabel objects in code.
 
-As Podspec is also provided so KILabel can be used by added the following line to your project's Podfile.
+A Podspec is also provided so KILabel can be used by added the following line to your project's Podfile.
 
 <pre>pod 'KILabel'</pre>
 
@@ -92,7 +92,7 @@ view.addSubview(label)
 
 ## Custom Links
 
-As well as the builtin link types, KILabel allows you to add custom link types using Link Classifiers. The KILabelLinkClassifier class is used to specfiy link detection, tap handling and the attributes used when displaying link text.
+As well as the built in link types, KILabel allows you to add custom link types using Link Classifiers. The KILabelLinkClassifier class is used to specify link detection, tap handling and the attributes used when displaying link text.
 
 The KILabelLinkClassifer class provides a convenience method for creating a classifier that works with a regular expression (NSRegularExpression). The NSDataDetector class provided by UIKit can be used in conjunction with this to easily extend KILabel to support dates, phone numbers and other links with just a couple of lines of code.
 
@@ -113,9 +113,12 @@ When working with link classifiers, tap handlers are attached directly to the cl
 
 The repository includes KILabelDemo, written in Objective-C, that shows a simple use of the label in a storyboard with examples for implementing touchable links.
 
-The demo also demonstrates how to use a gesture recognizer with the label to implement a long press on a link, which uses the **linkAtPoint** method.
+The demo also demonstrates how to use a gesture recognizer with the label to implement a long press on a link, which uses the **linkAtPoint** method to identify the tapped link.
 
-There's also an example using a UITableView where cells are given dynamic heights depending on the content.
+An example is also provided using a UITableView where cells are given dynamic heights depending on the content.
+
+Finally, an example of using custom link classifiers in order to add support for new link types. 
+
 
 ## License & Credits
 
