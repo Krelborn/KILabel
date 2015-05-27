@@ -151,6 +151,33 @@ NSString * const KILabelClassifierKey = @"classifier";
     [self updateDefaultLinkClassifiers];
 }
 
+// Gets Regex that defines user handles
+- (NSRegularExpression *)userHandleRegex
+{
+    static NSRegularExpression *regex = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSError *error = nil;
+        regex = [[NSRegularExpression alloc] initWithPattern:@"(?<!\\w)@([\\w\\_]+)?" options:0 error:&error];
+    });
+
+    return regex;
+}
+
+// Gets Regex that defines hashtags
+- (NSRegularExpression *)hashtagRegex
+{
+    // Setup a regular expression for hashtags
+    static NSRegularExpression *regex = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSError *error = nil;
+        regex = [[NSRegularExpression alloc] initWithPattern:@"(?<!\\w)#([\\w\\_]+)?" options:0 error:&error];
+    });
+
+    return regex;
+}
+
 - (void)setUserHandleLinkTapHandler:(KILinkTapHandler __nullable)userHandleLinkTapHandler
 {
     _userHandleClassifier.tapHandler = userHandleLinkTapHandler;
@@ -180,8 +207,6 @@ NSString * const KILabelClassifierKey = @"classifier";
 {
     return _urlClassifier.tapHandler;
 }
-
-#pragma mark - Text and Style management
 
 - (void)setAutomaticLinkDetectionEnabled:(BOOL)decorating
 {
@@ -232,6 +257,57 @@ NSString * const KILabelClassifierKey = @"classifier";
         [self removeLinkClassifier:_urlClassifier];
     }
 }
+
+#pragma mark - Custom Link Classifiers Management
+
+- (void)addLinkClassifier:(KILabelLinkClassifier *)classifier
+{
+    // Don't allow multiple adds of the same object
+    if ([_linkClassifiers containsObject:classifier])
+    {
+        return;
+    }
+
+    [_linkClassifiers addObject:classifier];
+
+    [self updateTextStoreWithText];
+}
+
+- (void)removeLinkClassifier:(KILabelLinkClassifier *)classifier
+{
+    // Prevent a change if there's nothing to remove
+    if (![_linkClassifiers containsObject:classifier])
+    {
+        return;
+    }
+
+    [_linkClassifiers removeObject:classifier];
+
+    [self updateTextStoreWithText];
+}
+
+- (KILabelLinkClassifier *)linkClassifierWithTag:(NSInteger)tag
+{
+    for (KILabelLinkClassifier *classifier in _linkClassifiers)
+    {
+        // Only return if the tag matches and its not one of our built in ones.
+        if ((classifier.tag == tag) && [self isCustomClassifier:classifier])
+        {
+            return classifier;
+        }
+    }
+
+    return nil;
+}
+
+- (BOOL)isCustomClassifier:(KILabelLinkClassifier *)classifier
+{
+    return (classifier != _userHandleClassifier) &&
+    (classifier != _hashtagClassifier) &&
+    (classifier != _urlClassifier);
+}
+
+#pragma mark - Text and Style Management
 
 - (NSDictionary *)linkAtPoint:(CGPoint)location
 {
@@ -481,32 +557,6 @@ NSString * const KILabelClassifierKey = @"classifier";
     return rangesForLinks;
 }
 
-- (NSRegularExpression *)userHandleRegex
-{
-    // Setup a regular expression for user handles and hashtags
-    static NSRegularExpression *regex = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSError *error = nil;
-        regex = [[NSRegularExpression alloc] initWithPattern:@"(?<!\\w)@([\\w\\_]+)?" options:0 error:&error];
-    });
-    
-    return regex;
-}
-
-- (NSRegularExpression *)hashtagRegex
-{
-    // Setup a regular expression for user handles and hashtags
-    static NSRegularExpression *regex = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSError *error = nil;
-        regex = [[NSRegularExpression alloc] initWithPattern:@"(?<!\\w)#([\\w\\_]+)?" options:0 error:&error];
-    });
-
-    return regex;
-}
-
 - (NSArray *)getLinksFromClassifiers
 {
     NSMutableArray *links = [NSMutableArray array];
@@ -527,54 +577,6 @@ NSString * const KILabelClassifierKey = @"classifier";
     
     return links;
 }
-
-- (void)addLinkClassifier:(KILabelLinkClassifier *)classifier
-{
-    // Don't allow multiple adds of the same object
-    if ([_linkClassifiers containsObject:classifier])
-    {
-        return;
-    }
-    
-    [_linkClassifiers addObject:classifier];
-    
-    [self updateTextStoreWithText];
-}
-
-- (void)removeLinkClassifier:(KILabelLinkClassifier *)classifier
-{
-    // Prevent a change if there's nothing to remove
-    if (![_linkClassifiers containsObject:classifier])
-    {
-        return;
-    }
-
-    [_linkClassifiers removeObject:classifier];
-    
-    [self updateTextStoreWithText];
-}
-
-- (KILabelLinkClassifier *)linkClassifierWithTag:(NSInteger)tag
-{
-    for (KILabelLinkClassifier *classifier in _linkClassifiers)
-    {
-        // Only return if the tag matches and its not one of our built in ones.
-        if ((classifier.tag == tag) && [self isCustomClassifier:classifier])
-        {
-            return classifier;
-        }
-    }
-    
-    return nil;
-}
-
-- (BOOL)isCustomClassifier:(KILabelLinkClassifier *)classifier
-{
-    return (classifier != _userHandleClassifier) &&
-           (classifier != _hashtagClassifier) &&
-           (classifier != _urlClassifier);
-}
-
 
 - (BOOL)ignoreMatch:(NSString*)string
 {
