@@ -388,6 +388,11 @@ NSString * const KILabelLinkKey = @"link";
         [rangesForLinks addObjectsFromArray:[self getRangesForURLs:self.attributedText]];
     }
     
+    if (self.linkDetectionTypes & KILinkTypeOptionPhoneNumber)
+    {
+        [rangesForLinks addObjectsFromArray:[self getRangesForPhoneNumbers:self.attributedText]];
+    }
+    
     return rangesForLinks;
 }
 
@@ -497,6 +502,46 @@ NSString * const KILabelLinkKey = @"link";
     return rangesForURLs;
 }
 
+- (NSArray *)getRangesForPhoneNumbers:(NSAttributedString *)text
+{
+    NSMutableArray *rangesForPhoneNumbers = [[NSMutableArray alloc] init];;
+    
+    // Use a data detector to find urls in the text
+    NSError *error = nil;
+    NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypePhoneNumber error:&error];
+    
+    NSString *plainText = text.string;
+    
+    NSArray *matches = [detector matchesInString:plainText
+                                         options:0
+                                           range:NSMakeRange(0, text.length)];
+    
+    // Add a range entry for every url we found
+    for (NSTextCheckingResult *match in matches)
+    {
+        NSRange matchRange = [match range];
+        
+        // If there's a link embedded in the attributes, use that instead of the raw text
+        NSString *realPhoneNumber = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
+        if (realPhoneNumber == nil)
+            realPhoneNumber = [plainText substringWithRange:matchRange];
+        
+        if (![self ignoreMatch:realPhoneNumber])
+        {
+            if ([match resultType] == NSTextCheckingTypePhoneNumber)
+            {
+                [rangesForPhoneNumbers addObject:@{KILabelLinkTypeKey : @(KILinkTypePhoneNumber),
+                                           KILabelRangeKey : [NSValue valueWithRange:matchRange],
+                                           KILabelLinkKey : realPhoneNumber,
+                                           }];
+            }
+        }
+    }
+    
+    return rangesForPhoneNumbers;
+}
+
+
 - (BOOL)ignoreMatch:(NSString*)string
 {
     return [_ignoredKeywords containsObject:[string lowercaseString]];
@@ -517,7 +562,7 @@ NSString * const KILabelLinkKey = @"link";
         [attributedString addAttributes:attributes range:range];
         
         // Add an URL attribute if this is a URL
-        if (_systemURLStyle && ((KILinkType)[dictionary[KILabelLinkTypeKey] unsignedIntegerValue] == KILinkTypeURL))
+        if (_systemURLStyle && (((KILinkType)[dictionary[KILabelLinkTypeKey] unsignedIntegerValue] == KILinkTypeURL)||((KILinkType)[dictionary[KILabelLinkTypeKey] unsignedIntegerValue] == KILinkTypePhoneNumber)) )
         {
             // Add a link attribute using the stored link
             [attributedString addAttribute:NSLinkAttributeName value:dictionary[KILabelLinkKey] range:range];
@@ -721,6 +766,10 @@ NSString * const KILabelLinkKey = @"link";
             _urlLinkTapHandler(self, string, range);
         }
         break;
+    case KILinkTypePhoneNumber:
+            if (_phoneNumberLinkTapHandler) {
+                _phoneNumberLinkTapHandler(self,string,range);
+            }
     }
 }
 
