@@ -46,6 +46,10 @@ typedef NS_ENUM(NSUInteger, KILinkType)
      *  URLs, http etc
      */
     KILinkTypeURL,
+    /**
+     *  PhoneNumver, etc
+     */
+    KILinkTypePhoneNumber,
 };
 
 /**
@@ -73,6 +77,10 @@ typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
      */
     KILinkTypeOptionURL = 1 << KILinkTypeURL,
     
+    /**
+     *  Specifies to include KILinkTypeURL links
+     */
+    KILinkTypeOptionPhoneNumber = 1 << KILinkTypePhoneNumber,
     /**
      *  Convenience contstant to include all link types
      */
@@ -176,6 +184,10 @@ IB_DESIGNABLE
  */
 @property (nullable, nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
 
+/**
+ * Callback block for KILinkTypePhoneNumber PhoneNumber tap.
+ */
+@property (nullable, nonatomic, copy) KILinkTapHandler phoneNumberLinkTapHandler;
 /** ****************************************************************************************** **
  * @name Geometry
  ** ****************************************************************************************** **/
