@@ -145,7 +145,7 @@ NSString * const KILabelClassifierKey = @"classifier";
     // Use a data detector to find urls in the text
     NSError *error = nil;
     NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
-    _urlClassifier = [KILabelLinkClassifier linkClassifierWithRegex:detector];
+    _urlClassifier = [KILabelLinkClassifier linkClassifierWithLinkAndRegex:detector];
 
     // Make sure the required link classifiers are attached
     [self updateDefaultLinkClassifiers];
@@ -842,6 +842,65 @@ NSString * const KILabelClassifierKey = @"classifier";
     }
     
     return self;
+}
+
++ (instancetype)linkClassifierWithLinkAndRegex:(NSRegularExpression *)regex
+{
+  KILabelLinkClassifier *classifier = [[KILabelLinkClassifier alloc] initWithClassifier:^NSArray *(KILabel *label) {
+    NSMutableArray *rangesForUserHandles = [[NSMutableArray alloc] init];
+    
+    // We run the regex on the label's plain text
+    NSString *text = label.text;
+    
+    // Run the expression and get matches
+    NSArray *matches = [regex matchesInString:text options:0 range:NSMakeRange(0, text.length)];
+    
+    // Add all our ranges to the result
+    for (NSTextCheckingResult *match in matches)
+    {
+      NSRange matchRange = [match range];
+      NSString *matchString = [KILabelLinkClassifier linkStringFromAttributedString:label.attributedText
+                                                                          withRange:matchRange];
+      
+      // Add the link if its not in our ignore list
+      if (![label.ignoredKeywords containsObject:[matchString lowercaseString]])
+      {
+        [rangesForUserHandles addObject:@{KILabelRangeKey : [NSValue valueWithRange:matchRange],
+                                          KILabelLinkKey : matchString
+                                          }];
+      }
+    }
+    
+    // check for NSLinkAttributeName too
+    
+    [label.attributedText enumerateAttribute:NSLinkAttributeName
+                                     inRange:NSMakeRange(0, label.attributedText.length)
+                                     options:0
+                                  usingBlock:^(id value, NSRange range, BOOL *stop) {
+      
+                                       if(!value)
+                                       {
+                                         return;
+                                       }
+                                       
+                                       NSRange matchRange = range;
+                                       NSString *matchString = [KILabelLinkClassifier linkStringFromAttributedString:label.attributedText
+                                                                                                           withRange:matchRange];
+                                       
+                                       // Add the link if its not in our ignore list
+                                       if (![label.ignoredKeywords containsObject:[matchString lowercaseString]])
+                                       {
+                                         [rangesForUserHandles addObject:@{KILabelRangeKey : [NSValue valueWithRange:matchRange],
+                                                                           KILabelLinkKey : matchString
+                                                                           }];
+                                       }
+    }];
+    
+    
+    return rangesForUserHandles;
+  }];
+  
+  return classifier;
 }
 
 + (instancetype)linkClassifierWithRegex:(NSRegularExpression *)regex
