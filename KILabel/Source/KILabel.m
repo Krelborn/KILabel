@@ -393,6 +393,11 @@ NSString * const KILabelClassifierKey = @"classifier";
 
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
+    if(!attributedText)
+    {
+      attributedText = [[NSAttributedString alloc] initWithString:@"" attributes:[self attributesFromProperties]];
+    }
+
     // Pass the text to the super class first
     [super setAttributedText:attributedText];
     
