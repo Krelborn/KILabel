@@ -309,6 +309,15 @@ IB_DESIGNABLE
 + (instancetype)linkClassifierWithRegex:(NSRegularExpression *)regex;
 
 /**
+ *  Create a new instance of KILabelLinkClassifier that will use the given regex for classifying and NSLinkAttributeName attribute
+ *
+ *  @param regex Regex used to match strings for links
+ *
+ *  @return Instance of KILabelLinkClassifier
+ */
++ (instancetype)linkClassifierWithLinkAndRegex:(NSRegularExpression *)regex;
+
+/**
  *  Helper method for extracting the string to use as the "link" from an attributed string. The
  *  plain text matching the range will be used, unless an NSLinkAttributedName property is present.
  *  See linkClassifierWithRegex: for an example.
