@@ -65,6 +65,7 @@ NSString * const KILabelClassifierKey = @"classifier";
     KILabelLinkClassifier *_userHandleClassifier;
     KILabelLinkClassifier *_hashtagClassifier;
     KILabelLinkClassifier *_urlClassifier;
+    NSDictionary *touchedLink;
 }
 
 #pragma mark - Construction
@@ -727,7 +728,6 @@ NSString * const KILabelClassifierKey = @"classifier";
     _isTouchMoved = NO;
     
     // Get the info for the touched link if there is one
-    NSDictionary *touchedLink;
     CGPoint touchLocation = [[touches anyObject] locationInView:self];
     touchedLink = [self linkAtPoint:touchLocation];
     
@@ -761,10 +761,8 @@ NSString * const KILabelClassifierKey = @"classifier";
     }
     
     // Get the info for the touched link if there is one
-    NSDictionary *touchedLink;
     CGPoint touchLocation = [[touches anyObject] locationInView:self];
-    touchedLink = [self linkAtPoint:touchLocation];
-    
+  
     if (touchedLink)
     {
         NSRange range = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
