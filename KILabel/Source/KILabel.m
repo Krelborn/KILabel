@@ -420,7 +420,7 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         NSString *matchString = [text substringWithRange:matchRange];
         
-        if (![self ignoreMatch:matchString])
+        if (![self ignoreMatch:matchString] && ![self shouldIgnoreUserHandle:matchString])
         {
             [rangesForUserHandles addObject:@{KILabelLinkTypeKey : @(KILinkTypeUserHandle),
                                               KILabelRangeKey : [NSValue valueWithRange:matchRange],
@@ -453,7 +453,7 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         NSString *matchString = [text substringWithRange:matchRange];
         
-        if (![self ignoreMatch:matchString])
+        if (![self ignoreMatch:matchString] && ![self shouldIgnoreHashtag:matchString])
         {
             [rangesForHashtags addObject:@{KILabelLinkTypeKey : @(KILinkTypeHashtag),
                                            KILabelRangeKey : [NSValue valueWithRange:matchRange],
@@ -490,7 +490,7 @@ NSString * const KILabelLinkKey = @"link";
         if (realURL == nil)
             realURL = [plainText substringWithRange:matchRange];
         
-        if (![self ignoreMatch:realURL])
+        if (![self ignoreMatch:realURL] && ![self shouldIgnoreURL:[NSURL URLWithString:realURL]])
         {
             if ([match resultType] == NSTextCheckingTypeLink)
             {
@@ -508,6 +508,27 @@ NSString * const KILabelLinkKey = @"link";
 - (BOOL)ignoreMatch:(NSString*)string
 {
     return [_ignoredKeywords containsObject:[string lowercaseString]];
+}
+
+- (BOOL)shouldIgnoreUserHandle:(NSString *)userHandle {
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(label:shouldIgnoreUserHandle:)]) {
+        return [self.delegate label:self shouldIgnoreUserHandle:userHandle];
+    }
+    return NO;
+}
+
+- (BOOL)shouldIgnoreHashtag:(NSString *)hashtag {
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(label:shouldIgnoreHashtag:)]) {
+        return [self.delegate label:self shouldIgnoreHashtag:hashtag];
+    }
+    return NO;
+}
+
+- (BOOL)shouldIgnoreURL:(NSURL *)URL {
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(label:shouldIgnoreURL:)]) {
+        return [self.delegate label:self shouldIgnoreURL:URL];
+    }
+    return NO;
 }
 
 - (NSAttributedString *)addLinkAttributesToAttributedString:(NSAttributedString *)string linkRanges:(NSArray *)linkRanges
