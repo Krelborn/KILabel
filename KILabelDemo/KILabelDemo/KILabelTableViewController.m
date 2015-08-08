@@ -77,6 +77,10 @@ NSString * const KILabelCellIdentifier = @"labelCell";
                               @"explain why this is the case http://www.adweek.com/socialtimes/the-reason-for-the-160-character-text-message-and-140-character-twitter-length-limits/4914.";
             break;
             
+        case 3:
+            cell.label.text = @"This is a phone number +1-617-555-1212, and this is a number (800) 555-1212.";
+            break;
+            
         default:
             cell.label.text = @"This row has no content!";
             break;
@@ -90,6 +94,7 @@ NSString * const KILabelCellIdentifier = @"labelCell";
     cell.label.userHandleLinkTapHandler = tapHandler;
     cell.label.urlLinkTapHandler = tapHandler;
     cell.label.hashtagLinkTapHandler = tapHandler;
+    cell.label.phoneNumberLinkTapHandler = tapHandler;
     
     return cell;
 }

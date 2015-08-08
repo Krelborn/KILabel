@@ -35,7 +35,7 @@ typedef NS_ENUM(NSUInteger, KILinkType)
     /**
      *  Usernames starting with "@" token
      */
-    KILinkTypeUserHandle,
+    KILinkTypeUserHandle = 0,
     
     /**
      *  Hashtags starting with "#" token
@@ -46,6 +46,11 @@ typedef NS_ENUM(NSUInteger, KILinkType)
      *  URLs, http etc
      */
     KILinkTypeURL,
+    
+    /**
+     *  Phone numbers
+     */
+    KILinkTypePhoneNumber
 };
 
 /**
@@ -72,6 +77,11 @@ typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
      *  Specifies to include KILinkTypeURL links
      */
     KILinkTypeOptionURL = 1 << KILinkTypeURL,
+    
+    /**
+     * Specified to include KILinkTypePhoneNumber links
+     */
+    KILinkTypeOptionPhoneNumber = 1 << KILinkTypePhoneNumber,
     
     /**
      *  Convenience contstant to include all link types
@@ -107,7 +117,7 @@ IB_DESIGNABLE
  ** ****************************************************************************************** **/
 
 /**
- * Enable/disable automatic detection of links, hashtags and usernames.
+ * Enable/disable automatic detection of links, hashtags, usernames, and phone numbers.
  */
 @property (nonatomic, assign, getter = isAutomaticLinkDetectionEnabled) IBInspectable BOOL automaticLinkDetectionEnabled;
 
@@ -175,6 +185,11 @@ IB_DESIGNABLE
  * Callback block for KILinkTypeURL link tap.
  */
 @property (nullable, nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
+
+/**
+ * Callback block for KILinkTypePhoneNumber link tap.
+ */
+@property (nullable, nonatomic, copy) KILinkTapHandler phoneNumberLinkTapHandler;
 
 /** ****************************************************************************************** **
  * @name Geometry
