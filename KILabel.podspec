@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "KILabel"
-  s.version      = "1.0.1"
+  s.version      = "1.0.2"
   s.summary      = "Replacement for UILabel for iOS 7 and 8 that provides automatic detection of links such as URLs, twitter style usernames and hashtags."
 
   s.description  = <<-DESC
@@ -22,7 +22,7 @@ Pod::Spec.new do |s|
   s.screenshots  = "https://raw.githubusercontent.com/Krelborn/KILabel/master/IKLabelDemoScreenshot.png"
   s.license      = { :type => "MIT", :file => "LICENSE" }
 
-  s.author             = { "Matt Styles" => "matt@compiledcreations.com" }
+  s.author             = { "Matt Styles" => "matt@compiledcreations.com", "Mark H. Granoff" => "mark@granoff.net" }
   s.social_media_url   = "http://twitter.com/Krelborn"
 
   s.platform     = :ios, "7.0"
