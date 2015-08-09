@@ -80,7 +80,19 @@ NSString * const KILabelCellIdentifier = @"labelCell";
         case 3:
             cell.label.text = @"This is a phone number +1-617-555-1212, and this is a number (800) 555-1212.";
             break;
-            
+
+        case 4: {
+            NSString *phoneNumber = @"+1-617-555-1212";
+            NSMutableAttributedString *text = [[NSMutableAttributedString alloc]
+                                               initWithString:[NSString stringWithFormat:@"This is a phone number %@ and the label is set to honor only matches with pre-existing NSLinkAttributeName's. This (508-555-1212) should have no link.", phoneNumber]
+                                               attributes:@{NSFontAttributeName:cell.label.font}];
+            NSRange range = [text.string rangeOfString:phoneNumber];
+            [text addAttribute:NSLinkAttributeName value:phoneNumber range:range];
+            cell.label.ignoreMatchesWithoutLinkAttribute = YES;
+            cell.label.attributedText = text;
+            break;
+        }
+
         default:
             cell.label.text = @"This row has no content!";
             break;

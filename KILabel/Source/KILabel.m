@@ -114,6 +114,9 @@ NSString * const KILabelLinkKey = @"link";
     // Link Type Attributes. Default is empty (no attributes).
     _linkTypeAttributes = [NSMutableDictionary dictionary];
     
+    // Highlight all matches for enabled link types
+    _ignoreMatchesWithoutLinkAttribute = NO;
+    
     // Don't underline URL links by default.
     _systemURLStyle = NO;
     
@@ -482,16 +485,31 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         
         // If there's a link embedded in the attributes, use that instead of the raw text
-        NSString *realText = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
-        if (realText == nil)
-            realText = [plainText substringWithRange:matchRange];
+        __block NSString *realText = nil;
+        __block NSRange realRange = matchRange;
+
+        if (_ignoreMatchesWithoutLinkAttribute) {
+            [text enumerateAttributesInRange:matchRange
+                                     options:0
+                                  usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
+                                      if (attrs[NSLinkAttributeName]) {
+                                          // this is the text to highlight
+                                          realText = attrs[NSLinkAttributeName];
+                                          realRange = range;
+                                          *stop = YES;
+                                      }
+                                  }];
+        }
         
-        if (![self ignoreMatch:realText])
+        if (realText == nil && !_ignoreMatchesWithoutLinkAttribute)
+            realText = [plainText substringWithRange:realRange];
+        
+        if (realText && ![self ignoreMatch:realText])
         {
             if ([match resultType] == detectorType)
             {
                 [ranges addObject:@{KILabelLinkTypeKey : @(linkType),
-                                           KILabelRangeKey : [NSValue valueWithRange:matchRange],
+                                           KILabelRangeKey : [NSValue valueWithRange:realRange],
                                            KILabelLinkKey : realText,
                                            }];
             }
@@ -527,12 +545,15 @@ NSString * const KILabelLinkKey = @"link";
         KILinkType linkType = [dictionary[KILabelLinkTypeKey] unsignedIntegerValue];
         
         NSDictionary *attributes = [self attributesForLinkType:linkType];
-        
+
+        // Remove any previously set NSLinkAttributeName so our attributes take hold
+        [attributedString removeAttribute:NSLinkAttributeName range:range];
+
         // Use our tint color to hilight the link
         [attributedString addAttributes:attributes range:range];
         
         // Add an URL attribute if this is a URL or phone number
-        if (_systemURLStyle && (linkType == KILinkTypeURL))
+        if (_systemURLStyle && (linkType == KILinkTypeURL || linkType == KILinkTypePhoneNumber))
         {
             // Add a link attribute using the stored link
             [attributedString addAttribute:NSLinkAttributeName value:dictionary[KILabelLinkKey] range:range];

@@ -133,6 +133,17 @@ IB_DESIGNABLE
  */
 @property (nullable, nonatomic, strong) NSSet *ignoredKeywords;
 
+/**
+ *  Ignore matches that do not already contain NSLinkAttributeName attributes.
+ *
+ *  @discussion Affects detection using attributed strings only. Defaults to NO.
+ *
+ *  When detecting links, do not select a match for highlighting unless it already contains an NSLinkAttributeName attribute.
+ *  This is handy if you've pre-decorated an attributed string containing phone numbers, and you do NOT want the built-in
+ *  phone number detector to include words like "Toll Free" or "Phone Number" or numbers you won't want called (like FAX numbers).
+ */
+@property (nonatomic, assign) BOOL ignoreMatchesWithoutLinkAttribute;
+
 /** ****************************************************************************************** **
  * @name Format & Appearance
  ** ****************************************************************************************** **/
