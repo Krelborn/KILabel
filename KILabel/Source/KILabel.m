@@ -701,26 +701,26 @@ NSString * const KILabelLinkKey = @"link";
 {
     switch (linkType)
     {
-    case KILinkTypeUserHandle:
-        if (_userHandleLinkTapHandler)
-        {
-            _userHandleLinkTapHandler(self, string, range);
-        }
-        break;
-        
-    case KILinkTypeHashtag:
-        if (_hashtagLinkTapHandler)
-        {
-            _hashtagLinkTapHandler(self, string, range);
-        }
-        break;
-        
-    case KILinkTypeURL:
-        if (_urlLinkTapHandler)
-        {
-            _urlLinkTapHandler(self, string, range);
-        }
-        break;
+        case KILinkTypeUserHandle:
+            if (_userHandleLinkTapHandler)
+            {
+                _userHandleLinkTapHandler(self, [string substringFromIndex:1], range);
+            }
+            break;
+            
+        case KILinkTypeHashtag:
+            if (_hashtagLinkTapHandler)
+            {
+                _hashtagLinkTapHandler(self, [string substringFromIndex:1], range);
+            }
+            break;
+            
+        case KILinkTypeURL:
+            if (_urlLinkTapHandler)
+            {
+                _urlLinkTapHandler(self, string, range);
+            }
+            break;
     }
 }
 
