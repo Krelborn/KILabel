@@ -26,7 +26,6 @@
 #import "KIViewController.h"
 #import "KILabel.h"
 
-
 @interface KIViewController ()
 
 @property (weak, nonatomic) IBOutlet KILabel *label;
@@ -40,20 +39,20 @@
 @end
 
 @implementation KIViewController
-
 /**
  *  When the view loads we attach handlers for the events we're interested in. KILabel differenciates
  *  between taps on different types of link.
  */
+#pragma mark - LifeCycle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     _label.systemURLStyle = YES;
-
+    
     // Attach block for handling taps on usenames
     _label.userHandleLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
-        NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
+        NSString *message        = [NSString stringWithFormat:@"You tapped %@", string];
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Username"
                                                                        message:message
                                                                 preferredStyle:UIAlertControllerStyleAlert];
@@ -61,9 +60,9 @@
         
         [self presentViewController:alert animated:YES completion:nil];
     };
-
+    
     _label.hashtagLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
-        NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
+        NSString *message        = [NSString stringWithFormat:@"You tapped %@", string];
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Hashtag"
                                                                        message:message
                                                                 preferredStyle:UIAlertControllerStyleAlert];
@@ -76,10 +75,19 @@
         // Open URLs
         [self attemptOpenURL:[NSURL URLWithString:string]];
     };
+    
+    _label.phoneLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+        NSString *message        = [NSString stringWithFormat:@"You tapped %@", string];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Phone"
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        
+        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
+        [self presentViewController:alert animated:YES completion:nil];
+    };
 }
 
 #pragma mark - Action Targets
-
 /**
  *  Handler for the user doing a "Long Press" gesture. This is configured in the
  *  storyboard by a gesture handler attached to the label.
@@ -189,15 +197,31 @@
     }
 }
 
+/**
+ *  Action method to demonstrate toggling of Phones hilighting and hit detection.
+ *
+ *  @param sender Switch action is bound to
+ */
+- (IBAction)toogleDetectPhones:(UISwitch *)sender
+{
+    if (sender.isOn)
+    {
+        self.label.linkDetectionTypes |= KILinkTypeOptionPhone;
+    }
+    else
+    {
+        self.label.linkDetectionTypes ^= KILinkTypeOptionPhone;
+    }
+}
 
 #pragma mark - Helper methods
-
 /**
  *  Checks to see if its an URL that we can open in safari. If we can then open it,
  *  otherwise put up an alert to the user.
  *
  *  @param url URL to open in Safari
  */
+
 - (void)attemptOpenURL:(NSURL *)url
 {
     BOOL safariCompatible = [url.scheme isEqualToString:@"http"] || [url.scheme isEqualToString:@"https"];
@@ -243,8 +267,8 @@
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Problem"
                                                                        message:@"Cannot send mail."
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
         
+        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     }
 }
@@ -258,6 +282,7 @@
 /**
  *  Just dismiss the controller. Don't do anything else.
  */
+
 -(void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
