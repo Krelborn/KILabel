@@ -31,7 +31,7 @@ NSString * const KILabelLinkKey     = @"link";
 
 #pragma mark - Private Interface
 
-@interface KILabel()
+@interface KILabel() < UIGestureRecognizerDelegate >
 
 // Used to control layout of glyphs and rendering
 @property (nonatomic, retain) NSLayoutManager *layoutManager;
@@ -86,14 +86,14 @@ NSString * const KILabelLinkKey     = @"link";
 - (void)setupTextSystem
 {
     // Create a text container and set it up to match our label properties
-    _textContainer                      = [[NSTextContainer alloc] init];
+    _textContainer                      = [NSTextContainer new];
     _textContainer.lineFragmentPadding  = 0;
     _textContainer.maximumNumberOfLines = self.numberOfLines;
     _textContainer.lineBreakMode        = self.lineBreakMode;
     _textContainer.size                 = self.frame.size;
 
     // Create a layout manager for rendering
-    _layoutManager          = [[NSLayoutManager alloc] init];
+    _layoutManager          = [NSLayoutManager new];
     _layoutManager.delegate = self;
     [_layoutManager addTextContainer:_textContainer];
     
@@ -114,13 +114,19 @@ NSString * const KILabelLinkKey     = @"link";
 
     // Don't underline URL links by default.
     _systemURLStyle                = NO;
-
+    
     // By default we hilight the selected link during a touch to give feedback that we are
     // responding to touch.
     _selectedLinkBackgroundColor   = [UIColor colorWithWhite:0.95 alpha:1.0];
     
     // Establish the text store with our current text
     [self updateTextStoreWithText];
+    
+    // attach long press gesture to collectionView
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    longPressRecognizer.minimumPressDuration          = .5;
+    longPressRecognizer.delegate                      = self;
+    [self addGestureRecognizer:longPressRecognizer];
 }
 
 #pragma mark - Text and Style management
@@ -751,6 +757,36 @@ NSString * const KILabelLinkKey     = @"link";
                 _phoneLinkTapHandler(self, string, range);
             }
     }
+}
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
+{
+    if (!_linkLongTapHandler) {
+        return;
+    }
+    
+    // Only accept gestures on our label and only in the begin state
+    if ((recognizer.view != self) || (recognizer.state != UIGestureRecognizerStateBegan))
+    {
+        return;
+    }
+    
+    // Get the position of the touch in the label
+    CGPoint location = [recognizer locationInView:self];
+    
+    // Get the link under the location from the label
+    NSDictionary *link = [self linkAtPoint:location];
+    
+    if (!link)
+    {
+        return;
+    }
+
+    NSRange range              = [[link objectForKey:KILabelRangeKey] rangeValue];
+    NSString *touchedSubstring = [link objectForKey:KILabelLinkKey];
+    KILinkType linkType        = (KILinkType)[[link objectForKey:KILabelLinkTypeKey] intValue];
+    
+    _linkLongTapHandler(self, linkType, touchedSubstring, range);
 }
 
 #pragma mark - Layout manager delegate

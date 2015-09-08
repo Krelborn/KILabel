@@ -29,12 +29,10 @@
 @interface KIViewController ()
 
 @property (weak, nonatomic) IBOutlet KILabel *label;
-
 - (IBAction)toggleDetectLinks:(UISwitch *)sender;
 - (IBAction)toggleDetectURLs:(UISwitch *)sender;
 - (IBAction)toggleDetectUsernames:(UISwitch *)sender;
 - (IBAction)toggleDetectHashtags:(UISwitch *)sender;
-- (IBAction)longPressLabel:(UILongPressGestureRecognizer *)sender;
 
 @end
 
@@ -85,57 +83,61 @@
         [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     };
+    
+    /**
+     *  Handler for the user doing a "Long Press" gesture.
+     */
+    _label.linkLongTapHandler = ^(KILabel *label, KILinkType type, NSString *string, NSRange range)
+    {
+        
+        UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil
+                                                                             message:nil
+                                                                      preferredStyle:UIAlertControllerStyleActionSheet];
+        switch (type)
+        {
+            case KILinkTypeUserHandle:
+            {
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                break;
+            }
+            case KILinkTypeHashtag:
+            {
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                break;
+            }
+            case KILinkTypeURL:
+            {
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Copy link" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    [UIPasteboard generalPasteboard].string = string;
+                }]];
+                
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Mail link" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    [self mailLink:string];
+                }]];
+                
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    NSURL *url = [NSURL URLWithString:string];
+                    [self attemptOpenURL:url];
+                }]];
+                break;
+            }
+            case KILinkTypePhone:
+            {
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
+                [actionSheet addAction:[UIAlertAction actionWithTitle:@"Call Phone" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:string]];
+                }]];
+                break;
+            }
+        }
+        
+        [self presentViewController:actionSheet animated:YES completion:nil];
+    };
 }
 
 #pragma mark - Action Targets
-/**
- *  Handler for the user doing a "Long Press" gesture. This is configured in the
- *  storyboard by a gesture handler attached to the label.
- *
- *  @param recognizer The gestrure recognizer
- */
-- (IBAction)longPressLabel:(UILongPressGestureRecognizer *)recognizer
-{
-    // Only accept gestures on our label and only in the begin state
-    if ((recognizer.view != self.label) || (recognizer.state != UIGestureRecognizerStateBegan))
-    {
-        return;
-    }
-    
-    // Get the position of the touch in the label
-    CGPoint location = [recognizer locationInView:self.label];
-    
-    // Get the link under the location from the label
-    NSDictionary *link = [self.label linkAtPoint:location];
-    
-    if (!link)
-    {
-        // No link was touched
-        return;
-    }
-    
-    // Put up an action sheet to let the user do something with the link
-    UIAlertController *actionSheet = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil]];
-
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Copy link" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        // Copy straight to the pasteboard
-        [UIPasteboard generalPasteboard].string = link[KILabelLinkKey];
-    }]];
-    
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Mail link" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        [self mailLink:link[KILabelLinkKey]];
-    }]];
-
-    [actionSheet addAction:[UIAlertAction actionWithTitle:@"Open in Safari" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        NSURL *url = [NSURL URLWithString:link[KILabelLinkKey]];
-        [self attemptOpenURL:url];
-    }]];
-    
-    // Show the action sheet
-    [self presentViewController:actionSheet animated:YES completion:nil];
-}
-
 /**
  *  Action method for toggling all link detection.
  *
