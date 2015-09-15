@@ -334,7 +334,6 @@ NSString * const KILabelLinkKey = @"link";
     else
     {
         shadow.shadowOffset = CGSizeMake(0, -1);
-        shadow.shadowColor = nil;
     }
     
     // Setup color attributes
