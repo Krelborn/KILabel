@@ -681,10 +681,6 @@ NSString * const KILabelLinkKey = @"link";
         
         [self receivedActionForLinkType:linkType string:touchedSubstring range:range];
     }
-    else
-    {
-        [super touchesBegan:touches withEvent:event];
-    }
     
     self.selectedRange = NSMakeRange(0, 0);
 }

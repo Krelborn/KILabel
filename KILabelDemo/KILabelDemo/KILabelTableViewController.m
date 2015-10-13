@@ -94,6 +94,11 @@ NSString * const KILabelCellIdentifier = @"labelCell";
     return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"Selected row indexPath: %@", indexPath);
+}
+
 /**
  *  Called when a link is tapped.
  *
