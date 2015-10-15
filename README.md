@@ -113,3 +113,9 @@ Any otherfeedback welcome through the obvious channels.
 - http://compiledcreations.com
 - http://twitter.com/krelborn
 - http://github.com/krelborn
+
+
+# From Me : 
+In this fork You have some additional things:
+- Phones 
+- LongTaps

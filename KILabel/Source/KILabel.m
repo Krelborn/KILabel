@@ -26,12 +26,12 @@
 #import "KILabel.h"
 
 NSString * const KILabelLinkTypeKey = @"linkType";
-NSString * const KILabelRangeKey = @"range";
-NSString * const KILabelLinkKey = @"link";
+NSString * const KILabelRangeKey    = @"range";
+NSString * const KILabelLinkKey     = @"link";
 
 #pragma mark - Private Interface
 
-@interface KILabel()
+@interface KILabel() < UIGestureRecognizerDelegate >
 
 // Used to control layout of glyphs and rendering
 @property (nonatomic, retain) NSLayoutManager *layoutManager;
@@ -40,28 +40,26 @@ NSString * const KILabelLinkKey = @"link";
 @property (nonatomic, retain) NSTextContainer *textContainer;
 
 // Backing storage for text that is rendered by the layout manager
-@property (nonatomic, retain) NSTextStorage *textStorage;
+@property (nonatomic, retain) NSTextStorage   *textStorage;
 
 // Dictionary of detected links and their ranges in the text
-@property (nonatomic, copy) NSArray *linkRanges;
+@property (nonatomic, copy  ) NSArray         *linkRanges;
 
 // State used to trag if the user has dragged during a touch
-@property (nonatomic, assign) BOOL isTouchMoved;
+@property (nonatomic, assign) BOOL            isTouchMoved;
 
 // During a touch, range of text that is displayed as selected
-@property (nonatomic, assign) NSRange selectedRange;
+@property (nonatomic, assign) NSRange         selectedRange;
 
 @end
 
 #pragma mark - Implementation
-
 @implementation KILabel
 {
     NSMutableDictionary *_linkTypeAttributes;
 }
 
 #pragma mark - Construction
-
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -88,14 +86,14 @@ NSString * const KILabelLinkKey = @"link";
 - (void)setupTextSystem
 {
     // Create a text container and set it up to match our label properties
-    _textContainer = [[NSTextContainer alloc] init];
-    _textContainer.lineFragmentPadding = 0;
+    _textContainer                      = [NSTextContainer new];
+    _textContainer.lineFragmentPadding  = 0;
     _textContainer.maximumNumberOfLines = self.numberOfLines;
-    _textContainer.lineBreakMode = self.lineBreakMode;
-    _textContainer.size = self.frame.size;
-    
+    _textContainer.lineBreakMode        = self.lineBreakMode;
+    _textContainer.size                 = self.frame.size;
+
     // Create a layout manager for rendering
-    _layoutManager = [[NSLayoutManager alloc] init];
+    _layoutManager          = [NSLayoutManager new];
     _layoutManager.delegate = self;
     [_layoutManager addTextContainer:_textContainer];
     
@@ -103,30 +101,35 @@ NSString * const KILabelLinkKey = @"link";
     [_textContainer setLayoutManager:_layoutManager];
     
     // Make sure user interaction is enabled so we can accept touches
-    self.userInteractionEnabled = YES;
-    
+    self.userInteractionEnabled    = YES;
+
     // Don't go via public setter as this will have undesired side effect
     _automaticLinkDetectionEnabled = YES;
-    
+
     // All links are detectable by default
-    _linkDetectionTypes = KILinkTypeOptionAll;
-    
+    _linkDetectionTypes            = KILinkTypeOptionAll;
+
     // Link Type Attributes. Default is empty (no attributes).
-    _linkTypeAttributes = [NSMutableDictionary dictionary];
-    
+    _linkTypeAttributes            = [NSMutableDictionary dictionary];
+
     // Don't underline URL links by default.
-    _systemURLStyle = NO;
+    _systemURLStyle                = NO;
     
     // By default we hilight the selected link during a touch to give feedback that we are
     // responding to touch.
-    _selectedLinkBackgroundColor = [UIColor colorWithWhite:0.95 alpha:1.0];
+    _selectedLinkBackgroundColor   = [UIColor colorWithWhite:0.95 alpha:1.0];
     
     // Establish the text store with our current text
     [self updateTextStoreWithText];
+    
+    // attach long press gesture to collectionView
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    longPressRecognizer.minimumPressDuration          = .5;
+    longPressRecognizer.delegate                      = self;
+    [self addGestureRecognizer:longPressRecognizer];
 }
 
 #pragma mark - Text and Style management
-
 - (void)setAutomaticLinkDetectionEnabled:(BOOL)decorating
 {
     _automaticLinkDetectionEnabled = decorating;
@@ -241,7 +244,7 @@ NSString * const KILabelLinkKey = @"link";
     self.text = self.text;
 }
 
-- (NSDictionary*)attributesForLinkType:(KILinkType)linkType
+- (NSDictionary *)attributesForLinkType:(KILinkType)linkType
 {
     NSDictionary *attributes = _linkTypeAttributes[@(linkType)];
     
@@ -269,7 +272,6 @@ NSString * const KILabelLinkKey = @"link";
 }
 
 #pragma mark - Text Storage Management
-
 - (void)updateTextStoreWithText
 {
     // Now update our storage from either the attributedString or the plain text
@@ -325,16 +327,16 @@ NSString * const KILabelLinkKey = @"link";
 - (NSDictionary *)attributesFromProperties
 {
     // Setup shadow attributes
-    NSShadow *shadow = shadow = [[NSShadow alloc] init];
+    NSShadow *shadow = shadow = [NSShadow new];
     if (self.shadowColor)
     {
-        shadow.shadowColor = self.shadowColor;
+        shadow.shadowColor  = self.shadowColor;
         shadow.shadowOffset = self.shadowOffset;
     }
     else
     {
         shadow.shadowOffset = CGSizeMake(0, -1);
-        shadow.shadowColor = nil;
+        shadow.shadowColor  = nil;
     }
     
     // Setup color attributes
@@ -350,7 +352,7 @@ NSString * const KILabelLinkKey = @"link";
     
     // Setup paragraph attributes
     NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
-    paragraph.alignment = self.textAlignment;
+    paragraph.alignment                = self.textAlignment;
     
     // Create the dictionary
     NSDictionary *attributes = @{NSFontAttributeName : self.font,
@@ -371,7 +373,7 @@ NSString * const KILabelLinkKey = @"link";
  */
 - (NSArray *)getRangesForLinks:(NSAttributedString *)text
 {
-    NSMutableArray *rangesForLinks = [[NSMutableArray alloc] init];
+    NSMutableArray *rangesForLinks = [NSMutableArray new];
     
     if (self.linkDetectionTypes & KILinkTypeOptionUserHandle)
     {
@@ -386,6 +388,11 @@ NSString * const KILabelLinkKey = @"link";
     if (self.linkDetectionTypes & KILinkTypeOptionURL)
     {
         [rangesForLinks addObjectsFromArray:[self getRangesForURLs:self.attributedText]];
+    }
+    
+    if (self.linkDetectionTypes & KILinkTypeOptionPhone)
+    {
+        [rangesForLinks addObjectsFromArray:[self getRangesForPhones:self.attributedText]];
     }
     
     return rangesForLinks;
@@ -463,10 +470,9 @@ NSString * const KILabelLinkKey = @"link";
     NSMutableArray *rangesForURLs = [[NSMutableArray alloc] init];;
     
     // Use a data detector to find urls in the text
-    NSError *error = nil;
+    NSError *error           = nil;
     NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
-    
-    NSString *plainText = text.string;
+    NSString *plainText      = text.string;
     
     NSArray *matches = [detector matchesInString:plainText
                                          options:0
@@ -479,7 +485,7 @@ NSString * const KILabelLinkKey = @"link";
         
         // If there's a link embedded in the attributes, use that instead of the raw text
         NSString *realURL = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
-        if (realURL == nil)
+        if (!realURL)
             realURL = [plainText substringWithRange:matchRange];
         
         if (![self ignoreMatch:realURL])
@@ -497,6 +503,37 @@ NSString * const KILabelLinkKey = @"link";
     return rangesForURLs;
 }
 
+- (NSArray *)getRangesForPhones:(NSAttributedString *)text
+{
+    NSMutableArray *rangesForPhones = [NSMutableArray new];
+    
+    // Use a data detector to find phones in the text
+    NSError *error           = nil;
+    NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypePhoneNumber
+                                                               error:&error];
+    NSString *plainText      = text.string;
+    NSArray *matches         = [detector matchesInString:plainText
+                                                 options:0
+                                                   range:NSMakeRange(0, text.length)];
+    
+    // Add a range entry for every phone we found
+    for (NSTextCheckingResult *match in matches)
+    {
+        NSRange matchRange    = [match range];
+        NSString *matchString = [plainText substringWithRange:matchRange];
+        
+        if (![self ignoreMatch:matchString])
+        {
+            [rangesForPhones addObject:@{KILabelLinkTypeKey : @(KILinkTypePhone),
+                                           KILabelRangeKey : [NSValue valueWithRange:matchRange],
+                                           KILabelLinkKey : matchString,
+                                           }];
+        }
+    }
+    
+    return rangesForPhones;
+}
+
 - (BOOL)ignoreMatch:(NSString*)string
 {
     return [_ignoredKeywords containsObject:[string lowercaseString]];
@@ -508,9 +545,8 @@ NSString * const KILabelLinkKey = @"link";
 
     for (NSDictionary *dictionary in linkRanges)
     {
-        NSRange range = [[dictionary objectForKey:KILabelRangeKey] rangeValue];
-        KILinkType linkType = [dictionary[KILabelLinkTypeKey] unsignedIntegerValue];
-        
+        NSRange range            = [[dictionary objectForKey:KILabelRangeKey] rangeValue];
+        KILinkType linkType      = [dictionary[KILabelLinkTypeKey] unsignedIntegerValue];
         NSDictionary *attributes = [self attributesForLinkType:linkType];
         
         // Use our tint color to hilight the link
@@ -528,24 +564,23 @@ NSString * const KILabelLinkKey = @"link";
 }
 
 #pragma mark - Layout and Rendering
-
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines
 {
     // Use our text container to calculate the bounds required. First save our
     // current text container setup
-    CGSize savedTextContainerSize = _textContainer.size;
+    CGSize savedTextContainerSize             = _textContainer.size;
     NSInteger savedTextContainerNumberOfLines = _textContainer.maximumNumberOfLines;
     
     // Apply the new potential bounds and number of lines
-    _textContainer.size = bounds.size;
+    _textContainer.size                 = bounds.size;
     _textContainer.maximumNumberOfLines = numberOfLines;
     
     // Measure the text with the new state
     CGRect textBounds = [_layoutManager usedRectForTextContainer:_textContainer];
     
     // Position the bounds and round up the size for good measure
-    textBounds.origin = bounds.origin;
-    textBounds.size.width = ceil(textBounds.size.width);
+    textBounds.origin      = bounds.origin;
+    textBounds.size.width  = ceil(textBounds.size.width);
     textBounds.size.height = ceil(textBounds.size.height);
 
     if (textBounds.size.height < bounds.size.height)
@@ -556,7 +591,7 @@ NSString * const KILabelLinkKey = @"link";
     }
 
     // Restore the old container state before we exit under any circumstances
-    _textContainer.size = savedTextContainerSize;
+    _textContainer.size                 = savedTextContainerSize;
     _textContainer.maximumNumberOfLines = savedTextContainerNumberOfLines;
     
     return textBounds;
@@ -569,7 +604,7 @@ NSString * const KILabelLinkKey = @"link";
     // [super drawTextInRect:rect];
     
     // Calculate the offset of the text in the view
-    NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
+    NSRange glyphRange     = [_layoutManager glyphRangeForTextContainer:_textContainer];
     CGPoint glyphsPosition = [self calcGlyphsPositionInView];
     
     // Drawing code
@@ -582,14 +617,14 @@ NSString * const KILabelLinkKey = @"link";
 {
     CGPoint textOffset = CGPointZero;
     
-    CGRect textBounds = [_layoutManager usedRectForTextContainer:_textContainer];
-    textBounds.size.width = ceil(textBounds.size.width);
+    CGRect textBounds      = [_layoutManager usedRectForTextContainer:_textContainer];
+    textBounds.size.width  = ceil(textBounds.size.width);
     textBounds.size.height = ceil(textBounds.size.height);
     
     if (textBounds.size.height < self.bounds.size.height)
     {
         CGFloat paddingHeight = (self.bounds.size.height - textBounds.size.height) / 2.0;
-        textOffset.y = paddingHeight;
+        textOffset.y          = paddingHeight;
     }
     
     return textOffset;
@@ -598,21 +633,18 @@ NSString * const KILabelLinkKey = @"link";
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
-    
     _textContainer.size = self.bounds.size;
 }
 
 - (void)setBounds:(CGRect)bounds
 {
     [super setBounds:bounds];
-    
     _textContainer.size = self.bounds.size;
 }
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
     // Update our container size when the view frame changes
     _textContainer.size = self.bounds.size;
 }
@@ -629,7 +661,6 @@ NSString * const KILabelLinkKey = @"link";
 }
 
 #pragma mark - Interactions
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     _isTouchMoved = NO;
@@ -637,7 +668,7 @@ NSString * const KILabelLinkKey = @"link";
     // Get the info for the touched link if there is one
     NSDictionary *touchedLink;
     CGPoint touchLocation = [[touches anyObject] locationInView:self];
-    touchedLink = [self linkAtPoint:touchLocation];
+    touchedLink           = [self linkAtPoint:touchLocation];
     
     if (touchedLink)
     {
@@ -664,20 +695,19 @@ NSString * const KILabelLinkKey = @"link";
     if (_isTouchMoved)
     {
         self.selectedRange = NSMakeRange(0, 0);
-        
         return;
     }
     
     // Get the info for the touched link if there is one
     NSDictionary *touchedLink;
     CGPoint touchLocation = [[touches anyObject] locationInView:self];
-    touchedLink = [self linkAtPoint:touchLocation];
+    touchedLink           = [self linkAtPoint:touchLocation];
     
     if (touchedLink)
     {
-        NSRange range = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
+        NSRange range              = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
         NSString *touchedSubstring = [touchedLink objectForKey:KILabelLinkKey];
-        KILinkType linkType = (KILinkType)[[touchedLink objectForKey:KILabelLinkTypeKey] intValue];
+        KILinkType linkType        = (KILinkType)[[touchedLink objectForKey:KILabelLinkTypeKey] intValue];
         
         [self receivedActionForLinkType:linkType string:touchedSubstring range:range];
     }
@@ -701,31 +731,65 @@ NSString * const KILabelLinkKey = @"link";
 {
     switch (linkType)
     {
-    case KILinkTypeUserHandle:
-        if (_userHandleLinkTapHandler)
-        {
-            _userHandleLinkTapHandler(self, string, range);
-        }
-        break;
-        
-    case KILinkTypeHashtag:
-        if (_hashtagLinkTapHandler)
-        {
-            _hashtagLinkTapHandler(self, string, range);
-        }
-        break;
-        
-    case KILinkTypeURL:
-        if (_urlLinkTapHandler)
-        {
-            _urlLinkTapHandler(self, string, range);
-        }
-        break;
+        case KILinkTypeUserHandle:
+            if (_userHandleLinkTapHandler)
+            {
+                _userHandleLinkTapHandler(self, string, range);
+            }
+            break;
+            
+        case KILinkTypeHashtag:
+            if (_hashtagLinkTapHandler)
+            {
+                _hashtagLinkTapHandler(self, string, range);
+            }
+            break;
+            
+        case KILinkTypeURL:
+            if (_urlLinkTapHandler)
+            {
+                _urlLinkTapHandler(self, string, range);
+            }
+            break;
+        case KILinkTypePhone:
+            if (_phoneLinkTapHandler)
+            {
+                _phoneLinkTapHandler(self, string, range);
+            }
     }
 }
 
-#pragma mark - Layout manager delegate
+- (void)handleLongPress:(UILongPressGestureRecognizer *)recognizer
+{
+    if (!_linkLongTapHandler) {
+        return;
+    }
+    
+    // Only accept gestures on our label and only in the begin state
+    if ((recognizer.view != self) || (recognizer.state != UIGestureRecognizerStateBegan))
+    {
+        return;
+    }
+    
+    // Get the position of the touch in the label
+    CGPoint location = [recognizer locationInView:self];
+    
+    // Get the link under the location from the label
+    NSDictionary *link = [self linkAtPoint:location];
+    
+    if (!link)
+    {
+        return;
+    }
 
+    NSRange range              = [[link objectForKey:KILabelRangeKey] rangeValue];
+    NSString *touchedSubstring = [link objectForKey:KILabelLinkKey];
+    KILinkType linkType        = (KILinkType)[[link objectForKey:KILabelLinkTypeKey] intValue];
+    
+    _linkLongTapHandler(self, linkType, touchedSubstring, range);
+}
+
+#pragma mark - Layout manager delegate
 -(BOOL)layoutManager:(NSLayoutManager *)layoutManager shouldBreakLineByWordBeforeCharacterAtIndex:(NSUInteger)charIndex
 {
     // Don't allow line breaks inside URLs
@@ -755,7 +819,7 @@ NSString * const KILabelLinkKey = @"link";
     
     // Remove the line breaks
     NSMutableParagraphStyle *mutableParagraphStyle = [paragraphStyle mutableCopy];
-    mutableParagraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+    mutableParagraphStyle.lineBreakMode            = NSLineBreakByWordWrapping;
     
     // Apply new style
     NSMutableAttributedString *restyled = [[NSMutableAttributedString alloc] initWithAttributedString:attributedString];

@@ -46,6 +46,10 @@ typedef NS_ENUM(NSUInteger, KILinkType)
      *  URLs, http etc
      */
     KILinkTypeURL,
+    /**
+     *  Phones
+     */
+    KILinkTypePhone
 };
 
 /**
@@ -73,6 +77,12 @@ typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
      */
     KILinkTypeOptionURL = 1 << KILinkTypeURL,
     
+    
+    /**
+     *  Specifies to include KILinkTypePhone links
+     */
+    KILinkTypeOptionPhone = 1 << KILinkTypePhone,
+    
     /**
      *  Convenience contstant to include all link types
      */
@@ -90,6 +100,7 @@ typedef NS_OPTIONS(NSUInteger, KILinkTypeOption)
  *  @param range  The range of the string within the label's text
  */
 typedef void (^KILinkTapHandler)(KILabel *label, NSString *string, NSRange range);
+typedef void (^KILinkLongTapHandler)(KILabel *label, KILinkType type, NSString *string, NSRange range);
 
 extern NSString * const KILabelLinkTypeKey;
 extern NSString * const KILabelRangeKey;
@@ -175,6 +186,16 @@ IB_DESIGNABLE
  * Callback block for KILinkTypeURL link tap.
  */
 @property (nullable, nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
+
+/**
+ * Callback block for KILinkTypePhone link tap.
+ */
+@property (nullable, nonatomic, copy) KILinkTapHandler phoneLinkTapHandler;
+
+/**
+ * Callback block for long link tap.
+ */
+@property (nullable, nonatomic, copy) KILinkLongTapHandler linkLongTapHandler;
 
 /** ****************************************************************************************** **
  * @name Geometry

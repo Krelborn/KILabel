@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="GmW-gZ-Ubu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="GmW-gZ-Ubu">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <scenes>
         <!--Label-->
@@ -16,50 +16,32 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is an interactive @label. Tap or hold http://www.google.com and #marvel!" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="9Ku-Sw-eBB" customClass="KILabel">
-                                <rect key="frame" x="20" y="168" width="280" height="61"/>
+                            <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is an interactive @label. Tap or hold http://www.google.com and #marvel! or you can call +380665593617  " lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="9Ku-Sw-eBB" customClass="KILabel">
+                                <rect key="frame" x="20" y="168" width="280" height="82"/>
                                 <gestureRecognizers/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="highlightedColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <size key="shadowOffset" width="2" height="3"/>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="hYY-VZ-vVo" appends="YES" id="H1T-Bb-ucx"/>
-                                </connections>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pjU-CQ-iBD">
-                                <rect key="frame" x="0.0" y="331" width="320" height="188"/>
+                                <rect key="frame" x="0.0" y="299" width="320" height="220"/>
+                                <userGuides>
+                                    <userLayoutGuide location="23" affinity="minY"/>
+                                </userGuides>
                                 <subviews>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detect URLs" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TY6-nI-Q7g">
-                                        <rect key="frame" x="20" y="64" width="98" height="21"/>
+                                        <rect key="frame" x="20" y="52" width="98" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detect Hashtags" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3TZ-3F-vfa">
-                                        <rect key="frame" x="20" y="142" width="128" height="21"/>
+                                        <rect key="frame" x="20" y="130" width="128" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LnO-YF-SdH">
-                                        <rect key="frame" x="251" y="137" width="51" height="31"/>
-                                        <connections>
-                                            <action selector="toggleDetectHashtags:" destination="vXZ-lx-hvc" eventType="valueChanged" id="05O-N9-lWs"/>
-                                        </connections>
-                                    </switch>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMP-nM-9o0">
-                                        <rect key="frame" x="251" y="59" width="51" height="31"/>
-                                        <connections>
-                                            <action selector="toggleDetectURLs:" destination="vXZ-lx-hvc" eventType="valueChanged" id="HCx-Qk-Slq"/>
-                                        </connections>
-                                    </switch>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mHu-Ru-r5S">
-                                        <rect key="frame" x="251" y="20" width="51" height="31"/>
-                                        <connections>
-                                            <action selector="toggleDetectLinks:" destination="vXZ-lx-hvc" eventType="valueChanged" id="yOv-pU-w7a"/>
-                                        </connections>
-                                    </switch>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detect Links" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JrJ-IY-eO5">
-                                        <rect key="frame" x="20" y="25" width="96" height="21"/>
+                                        <rect key="frame" x="21" y="13" width="96" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="96" id="K3J-Tn-uSg"/>
                                         </constraints>
@@ -67,36 +49,69 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detect Usernames" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nPx-v0-z26">
-                                        <rect key="frame" x="20" y="103" width="143" height="21"/>
+                                        <rect key="frame" x="20" y="91" width="143" height="21"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LnO-YF-SdH">
+                                        <rect key="frame" x="251" y="125" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="toggleDetectHashtags:" destination="vXZ-lx-hvc" eventType="valueChanged" id="05O-N9-lWs"/>
+                                        </connections>
+                                    </switch>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nGE-GP-T5n">
+                                        <rect key="frame" x="251" y="164" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="toogleDetectPhones:" destination="vXZ-lx-hvc" eventType="valueChanged" id="65K-m9-omj"/>
+                                        </connections>
+                                    </switch>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMP-nM-9o0">
+                                        <rect key="frame" x="251" y="47" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="toggleDetectURLs:" destination="vXZ-lx-hvc" eventType="valueChanged" id="HCx-Qk-Slq"/>
+                                        </connections>
+                                    </switch>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mHu-Ru-r5S">
+                                        <rect key="frame" x="251" y="8" width="51" height="31"/>
+                                        <connections>
+                                            <action selector="toggleDetectLinks:" destination="vXZ-lx-hvc" eventType="valueChanged" id="yOv-pU-w7a"/>
+                                        </connections>
+                                    </switch>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7s9-Hr-5Qj">
-                                        <rect key="frame" x="251" y="98" width="51" height="31"/>
+                                        <rect key="frame" x="251" y="86" width="51" height="31"/>
                                         <connections>
                                             <action selector="toggleDetectUsernames:" destination="vXZ-lx-hvc" eventType="valueChanged" id="t88-ng-mDG"/>
                                         </connections>
                                     </switch>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detect Phones" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gdJ-dR-tKu">
+                                        <rect key="frame" x="20" y="169" width="113" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstItem="3TZ-3F-vfa" firstAttribute="leading" secondItem="pjU-CQ-iBD" secondAttribute="leading" constant="20" id="0qz-fU-3mc"/>
                                     <constraint firstItem="LnO-YF-SdH" firstAttribute="top" secondItem="7s9-Hr-5Qj" secondAttribute="bottom" constant="8" id="1Lo-OF-FQ1"/>
                                     <constraint firstAttribute="trailing" secondItem="mHu-Ru-r5S" secondAttribute="trailing" constant="20" id="9Cr-pb-jUU"/>
-                                    <constraint firstItem="mHu-Ru-r5S" firstAttribute="top" secondItem="pjU-CQ-iBD" secondAttribute="top" constant="20" id="A6a-AP-mbW"/>
+                                    <constraint firstItem="nGE-GP-T5n" firstAttribute="top" secondItem="LnO-YF-SdH" secondAttribute="bottom" constant="8" id="9zO-Sm-eeT"/>
+                                    <constraint firstItem="mHu-Ru-r5S" firstAttribute="top" secondItem="pjU-CQ-iBD" secondAttribute="top" constant="8" id="A6a-AP-mbW"/>
                                     <constraint firstItem="3TZ-3F-vfa" firstAttribute="centerY" secondItem="LnO-YF-SdH" secondAttribute="centerY" id="Lqb-Ie-h6Q"/>
+                                    <constraint firstItem="gdJ-dR-tKu" firstAttribute="centerY" secondItem="nGE-GP-T5n" secondAttribute="centerY" id="Lt1-IL-1zc"/>
                                     <constraint firstItem="oMP-nM-9o0" firstAttribute="top" secondItem="mHu-Ru-r5S" secondAttribute="bottom" constant="8" id="QkF-dc-W4N"/>
                                     <constraint firstAttribute="trailing" secondItem="7s9-Hr-5Qj" secondAttribute="trailing" constant="20" id="T4F-Xw-IQJ"/>
                                     <constraint firstItem="7s9-Hr-5Qj" firstAttribute="top" secondItem="oMP-nM-9o0" secondAttribute="bottom" constant="8" id="Wbr-xz-qDB"/>
                                     <constraint firstAttribute="trailing" secondItem="LnO-YF-SdH" secondAttribute="trailing" constant="20" id="bQC-cB-ppj"/>
-                                    <constraint firstItem="JrJ-IY-eO5" firstAttribute="leading" secondItem="pjU-CQ-iBD" secondAttribute="leading" constant="20" id="c9E-Lh-7lI"/>
-                                    <constraint firstAttribute="height" constant="188" id="fKp-0d-MJc"/>
+                                    <constraint firstItem="JrJ-IY-eO5" firstAttribute="leading" secondItem="pjU-CQ-iBD" secondAttribute="leading" constant="21" id="c9E-Lh-7lI"/>
+                                    <constraint firstAttribute="height" constant="220" id="fKp-0d-MJc"/>
                                     <constraint firstItem="JrJ-IY-eO5" firstAttribute="centerY" secondItem="mHu-Ru-r5S" secondAttribute="centerY" id="gLK-Mu-OpO"/>
                                     <constraint firstAttribute="trailing" secondItem="oMP-nM-9o0" secondAttribute="trailing" constant="20" id="iH7-2p-yRe"/>
                                     <constraint firstItem="nPx-v0-z26" firstAttribute="leading" secondItem="pjU-CQ-iBD" secondAttribute="leading" constant="20" id="lf8-HH-XTC"/>
                                     <constraint firstItem="TY6-nI-Q7g" firstAttribute="leading" secondItem="pjU-CQ-iBD" secondAttribute="leading" constant="20" id="pDJ-gC-yOh"/>
+                                    <constraint firstItem="gdJ-dR-tKu" firstAttribute="leading" secondItem="pjU-CQ-iBD" secondAttribute="leading" constant="20" id="sdd-IQ-pmX"/>
                                     <constraint firstItem="oMP-nM-9o0" firstAttribute="centerY" secondItem="TY6-nI-Q7g" secondAttribute="centerY" id="tg4-A6-xuB"/>
                                     <constraint firstItem="7s9-Hr-5Qj" firstAttribute="centerY" secondItem="nPx-v0-z26" secondAttribute="centerY" id="uEJ-vd-uDN"/>
+                                    <constraint firstAttribute="trailing" secondItem="nGE-GP-T5n" secondAttribute="trailing" constant="20" id="wOO-ZG-JdG"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -116,11 +131,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="hYY-VZ-vVo">
-                    <connections>
-                        <action selector="longPressLabel:" destination="vXZ-lx-hvc" id="E4M-oW-knL"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1229" y="549"/>
         </scene>

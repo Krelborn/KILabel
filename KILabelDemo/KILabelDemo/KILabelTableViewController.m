@@ -7,13 +7,12 @@
 //
 
 #import "KILabelTableViewController.h"
-
 #import "KILabelTableViewCell.h"
 
 NSString * const KILabelCellIdentifier = @"labelCell";
 
 @implementation KILabelTableViewController
-
+#pragma mark - LifeCycle
 /**
  *  When the view loads we set the estimated row height to a non-zero value. This will mean
  * that the row height will be calculated for us by auto-layout when each row comes into view.
@@ -21,12 +20,10 @@ NSString * const KILabelCellIdentifier = @"labelCell";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-        
     self.tableView.estimatedRowHeight = 44;
 }
 
 #pragma mark - Table view data source
-
 /**
  *  Just one section in our table.
  */
@@ -68,7 +65,7 @@ NSString * const KILabelCellIdentifier = @"labelCell";
             break;
             
         case 1:
-            cell.label.text = @"Here's an #emoji, one of the joys of unicode strings! 😈";
+            cell.label.text = @"Here's an #emoji, one of the joys of unicode strings! 😈 Some number: +380665593617";
             break;
             
         case 2:
@@ -88,8 +85,9 @@ NSString * const KILabelCellIdentifier = @"labelCell";
     };
     
     cell.label.userHandleLinkTapHandler = tapHandler;
-    cell.label.urlLinkTapHandler = tapHandler;
-    cell.label.hashtagLinkTapHandler = tapHandler;
+    cell.label.urlLinkTapHandler        = tapHandler;
+    cell.label.hashtagLinkTapHandler    = tapHandler;
+    cell.label.phoneLinkTapHandler      = tapHandler;
     
     return cell;
 }
@@ -102,7 +100,7 @@ NSString * const KILabelCellIdentifier = @"labelCell";
  */
 - (void)tappedLink:(NSString *)link cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *title = [NSString stringWithFormat:@"Tapped %@", link];
+    NSString *title   = [NSString stringWithFormat:@"Tapped %@", link];
     NSString *message = [NSString stringWithFormat:@"You tapped %@ in section %@, row %@.",
                          link,
                          @(indexPath.section),
@@ -111,8 +109,8 @@ NSString * const KILabelCellIdentifier = @"labelCell";
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
                                                                    message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
     
+    [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
