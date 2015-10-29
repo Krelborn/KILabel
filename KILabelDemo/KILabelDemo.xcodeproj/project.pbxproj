@@ -25,6 +25,7 @@
 		C97DB327183A59670028EA5C /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB326183A59670028EA5C /* MessageUI.framework */; };
 		C9ABA08A1AEE5A8600363407 /* KILabelTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */; };
 		C9ABA08D1AEE5BAC00363407 /* KILabelTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ABA08C1AEE5BAC00363407 /* KILabelTableViewCell.m */; };
+		EBE0E7DD1BE2E52000D905B6 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBE0E7DC1BE2E52000D905B6 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabelTableViewController.m; sourceTree = "<group>"; };
 		C9ABA08B1AEE5BAC00363407 /* KILabelTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabelTableViewCell.h; sourceTree = "<group>"; };
 		C9ABA08C1AEE5BAC00363407 /* KILabelTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabelTableViewCell.m; sourceTree = "<group>"; };
+		EBE0E7DC1BE2E52000D905B6 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 				C97DB2F6183A56EF0028EA5C /* InfoPlist.strings */,
 				C97DB2F9183A56EF0028EA5C /* main.m */,
 				C97DB2FB183A56EF0028EA5C /* KILabelDemo-Prefix.pch */,
+				EBE0E7DC1BE2E52000D905B6 /* Launch Screen.storyboard */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -258,6 +261,7 @@
 			files = (
 				C97DB306183A56EF0028EA5C /* Images.xcassets in Resources */,
 				C97DB2F8183A56EF0028EA5C /* InfoPlist.strings in Resources */,
+				EBE0E7DD1BE2E52000D905B6 /* Launch Screen.storyboard in Resources */,
 				C97DB301183A56EF0028EA5C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
