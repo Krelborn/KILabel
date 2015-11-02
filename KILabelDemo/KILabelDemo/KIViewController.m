@@ -51,6 +51,11 @@
     
     _label.systemURLStyle = YES;
 
+	NSMutableAttributedString *string = [_label.attributedText mutableCopy];
+	[string addAttribute:NSLinkAttributeName
+				   value:@"https://www.google.com/search?q=interactive"
+				   range:NSMakeRange(11, 11)];
+	_label.attributedText = string;
     // Attach block for handling taps on usenames
     _label.userHandleLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
         NSString *message = [NSString stringWithFormat:@"You tapped %@", string];

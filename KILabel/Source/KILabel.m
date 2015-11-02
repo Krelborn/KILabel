@@ -493,7 +493,17 @@ NSString * const KILabelLinkKey = @"link";
             }
         }
     }
-    
+	
+	[text enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, text.length) options:0 usingBlock:^(id  _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+		if (value != nil)
+		{
+			[rangesForURLs addObject:@{KILabelLinkTypeKey : @(KILinkTypeURL),
+								  KILabelRangeKey : [NSValue valueWithRange:range],
+								  KILabelLinkKey : value,
+								   }];
+		}
+	}];
+	
     return rangesForURLs;
 }
 
