@@ -478,7 +478,12 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         
         // If there's a link embedded in the attributes, use that instead of the raw text
-        NSString *realURL = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
+        id resultObject = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
+		NSString *realURL = resultObject;
+		if ([resultObject respondsToSelector: @selector(absoluteString)])
+		{
+			realURL = [resultObject absoluteString];
+		}
         if (realURL == nil)
             realURL = [plainText substringWithRange:matchRange];
         
@@ -493,7 +498,28 @@ NSString * const KILabelLinkKey = @"link";
             }
         }
     }
-    
+	
+	[text enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, text.length) options:0 usingBlock:^(id _Nullable value, NSRange range, BOOL * _Nonnull stop) {
+		if (value != nil)
+		{
+			if ([value class] == [NSURL class])
+			{
+				NSURL *valueURL = (NSURL *) value;
+				[rangesForURLs addObject:@{KILabelLinkTypeKey : @(KILinkTypeURL),
+									  KILabelRangeKey : [NSValue valueWithRange:range],
+									  KILabelLinkKey : valueURL.absoluteString,
+									   }];
+			}
+			else
+			{
+				[rangesForURLs addObject:@{KILabelLinkTypeKey : @(KILinkTypeURL),
+										   KILabelRangeKey : [NSValue valueWithRange:range],
+										   KILabelLinkKey : value,
+										   }];
+			}
+		}
+	}];
+	
     return rangesForURLs;
 }
 

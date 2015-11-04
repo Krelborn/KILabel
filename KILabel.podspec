@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "KILabel"
-  s.version      = "1.0.1"
+  s.version      = "1.0.2"
   s.summary      = "Replacement for UILabel for iOS 7 and 8 that provides automatic detection of links such as URLs, twitter style usernames and hashtags."
 
   s.description  = <<-DESC
