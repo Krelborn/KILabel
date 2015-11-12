@@ -353,11 +353,17 @@ NSString * const KILabelLinkKey = @"link";
     paragraph.alignment = self.textAlignment;
     
     // Create the dictionary
-    NSDictionary *attributes = @{NSFontAttributeName : self.font,
-                                 NSForegroundColorAttributeName : color,
-                                 NSShadowAttributeName : shadow,
-                                 NSParagraphStyleAttributeName : paragraph,
-                                 };
+    NSMutableDictionary *attributes = @{
+        NSFontAttributeName : self.font,
+        NSShadowAttributeName : shadow,
+        NSParagraphStyleAttributeName : paragraph,
+    }.mutableCopy;
+    
+    if (color)
+    {
+        attributes[NSForegroundColorAttributeName] = color;
+    }
+    
     return attributes;
 }
 
