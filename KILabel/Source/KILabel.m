@@ -353,11 +353,17 @@ NSString * const KILabelLinkKey = @"link";
     paragraph.alignment = self.textAlignment;
     
     // Create the dictionary
-    NSDictionary *attributes = @{NSFontAttributeName : self.font,
-                                 NSForegroundColorAttributeName : color,
-                                 NSShadowAttributeName : shadow,
-                                 NSParagraphStyleAttributeName : paragraph,
-                                 };
+    NSMutableDictionary *attributes = @{
+        NSFontAttributeName : self.font,
+        NSShadowAttributeName : shadow,
+        NSParagraphStyleAttributeName : paragraph,
+    }.mutableCopy;
+    
+    if (color)
+    {
+        attributes[NSForegroundColorAttributeName] = color;
+    }
+    
     return attributes;
 }
 
@@ -680,10 +686,6 @@ NSString * const KILabelLinkKey = @"link";
         KILinkType linkType = (KILinkType)[[touchedLink objectForKey:KILabelLinkTypeKey] intValue];
         
         [self receivedActionForLinkType:linkType string:touchedSubstring range:range];
-    }
-    else
-    {
-        [super touchesBegan:touches withEvent:event];
     }
     
     self.selectedRange = NSMakeRange(0, 0);
