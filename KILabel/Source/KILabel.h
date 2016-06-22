@@ -27,6 +27,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class KILabel;
+
+@protocol KILabelDelegate <NSObject>
+
+@optional
+
+- (BOOL)label:(KILabel *)label shouldIgnoreUserHandle:(NSString *)userHandle;
+- (BOOL)label:(KILabel *)label shouldIgnoreHashtag:(NSString *)hashtag;
+- (BOOL)label:(KILabel *)label shouldIgnoreURL:(NSURL *)URL;
+
+
+@end
+
+
 /**
  *  Constants for identifying link types we can detect
  */
@@ -122,6 +136,11 @@ IB_DESIGNABLE
  * @discussion The comparison between the matches and the ignored words is case insensitive.
  */
 @property (nullable, nonatomic, strong) NSSet *ignoredKeywords;
+
+/** 
+ * Optionally, assign a delegate to query for usernames/hashtags/URLs to be ignored
+ */
+@property (nullable, nonatomic, weak) id <KILabelDelegate> delegate;
 
 /** ****************************************************************************************** **
  * @name Format & Appearance

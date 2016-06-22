@@ -353,12 +353,20 @@ NSString * const KILabelLinkKey = @"link";
     paragraph.alignment = self.textAlignment;
     
     // Create the dictionary
-    NSDictionary *attributes = @{NSFontAttributeName : self.font,
-                                 NSForegroundColorAttributeName : color,
-                                 NSShadowAttributeName : shadow,
-                                 NSParagraphStyleAttributeName : paragraph,
-                                 };
-    return attributes;
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    if(self.font != nil) {
+      [attributes setObject:self.font forKey:NSFontAttributeName];
+    }
+    if(color != nil) {
+      [attributes setObject:color forKey:NSForegroundColorAttributeName];
+    }
+    if(shadow != nil) {
+      [attributes setObject:shadow forKey:NSShadowAttributeName];
+    }
+    if(paragraph != nil) {
+      [attributes setObject:paragraph forKey:NSParagraphStyleAttributeName];
+    }
+    return [attributes copy];
 }
 
 /**
@@ -412,7 +420,7 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         NSString *matchString = [text substringWithRange:matchRange];
         
-        if (![self ignoreMatch:matchString])
+        if (![self ignoreMatch:matchString] && ![self shouldIgnoreUserHandle:matchString])
         {
             [rangesForUserHandles addObject:@{KILabelLinkTypeKey : @(KILinkTypeUserHandle),
                                               KILabelRangeKey : [NSValue valueWithRange:matchRange],
@@ -445,7 +453,7 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         NSString *matchString = [text substringWithRange:matchRange];
         
-        if (![self ignoreMatch:matchString])
+        if (![self ignoreMatch:matchString] && ![self shouldIgnoreHashtag:matchString])
         {
             [rangesForHashtags addObject:@{KILabelLinkTypeKey : @(KILinkTypeHashtag),
                                            KILabelRangeKey : [NSValue valueWithRange:matchRange],
@@ -478,11 +486,10 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         
         // If there's a link embedded in the attributes, use that instead of the raw text
-        NSString *realURL = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
-        if (realURL == nil)
-            realURL = [plainText substringWithRange:matchRange];
-        
-        if (![self ignoreMatch:realURL])
+        NSURL *realURL = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
+        NSString *realURLString = realURL == nil ? [plainText substringWithRange:matchRange] : [realURL absoluteString];
+
+        if (![self ignoreMatch:realURLString] && realURL != nil && ![self shouldIgnoreURL:realURL])
         {
             if ([match resultType] == NSTextCheckingTypeLink)
             {
@@ -500,6 +507,27 @@ NSString * const KILabelLinkKey = @"link";
 - (BOOL)ignoreMatch:(NSString*)string
 {
     return [_ignoredKeywords containsObject:[string lowercaseString]];
+}
+
+- (BOOL)shouldIgnoreUserHandle:(NSString *)userHandle {
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(label:shouldIgnoreUserHandle:)]) {
+        return [self.delegate label:self shouldIgnoreUserHandle:userHandle];
+    }
+    return NO;
+}
+
+- (BOOL)shouldIgnoreHashtag:(NSString *)hashtag {
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(label:shouldIgnoreHashtag:)]) {
+        return [self.delegate label:self shouldIgnoreHashtag:hashtag];
+    }
+    return NO;
+}
+
+- (BOOL)shouldIgnoreURL:(NSURL *)URL {
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(label:shouldIgnoreURL:)]) {
+        return [self.delegate label:self shouldIgnoreURL:URL];
+    }
+    return NO;
 }
 
 - (NSAttributedString *)addLinkAttributesToAttributedString:(NSAttributedString *)string linkRanges:(NSArray *)linkRanges
@@ -676,7 +704,14 @@ NSString * const KILabelLinkKey = @"link";
     if (touchedLink)
     {
         NSRange range = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
-        NSString *touchedSubstring = [touchedLink objectForKey:KILabelLinkKey];
+        id touchedLinkObject = [touchedLink objectForKey:KILabelLinkKey];
+        NSString *touchedSubstring;
+        if([touchedLinkObject isKindOfClass:[NSURL class]]) {
+            touchedSubstring = [(NSURL *)touchedLinkObject absoluteString];
+        } else {
+            touchedSubstring = touchedLinkObject;
+        }
+
         KILinkType linkType = (KILinkType)[[touchedLink objectForKey:KILabelLinkTypeKey] intValue];
         
         [self receivedActionForLinkType:linkType string:touchedSubstring range:range];
