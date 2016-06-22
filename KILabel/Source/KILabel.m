@@ -704,7 +704,14 @@ NSString * const KILabelLinkKey = @"link";
     if (touchedLink)
     {
         NSRange range = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
-        NSString *touchedSubstring = [touchedLink objectForKey:KILabelLinkKey];
+        id touchedLinkObject = [touchedLink objectForKey:KILabelLinkKey];
+        NSString *touchedSubstring;
+        if([touchedLinkObject isKindOfClass:[NSURL class]]) {
+            touchedSubstring = [(NSURL *)touchedLinkObject absoluteString];
+        } else {
+            touchedSubstring = touchedLinkObject;
+        }
+
         KILinkType linkType = (KILinkType)[[touchedLink objectForKey:KILabelLinkTypeKey] intValue];
         
         [self receivedActionForLinkType:linkType string:touchedSubstring range:range];
