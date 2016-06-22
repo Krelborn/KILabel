@@ -486,11 +486,10 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         
         // If there's a link embedded in the attributes, use that instead of the raw text
-        NSString *realURL = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
-        if (realURL == nil)
-            realURL = [plainText substringWithRange:matchRange];
-        
-        if (![self ignoreMatch:realURL] && ![self shouldIgnoreURL:[NSURL URLWithString:realURL]])
+        NSURL *realURL = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
+        NSString *realURLString = realURL == nil ? [plainText substringWithRange:matchRange] : [realURL absoluteString];
+
+        if (![self ignoreMatch:realURLString] && realURL != nil && ![self shouldIgnoreURL:realURL])
         {
             if ([match resultType] == NSTextCheckingTypeLink)
             {
