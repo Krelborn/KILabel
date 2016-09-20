@@ -29,6 +29,11 @@ NSString * const KILabelLinkTypeKey = @"linkType";
 NSString * const KILabelRangeKey = @"range";
 NSString * const KILabelLinkKey = @"link";
 
+#define userTagColor [UIColor colorWithRed: 249.0/255.0 green: 34.0/255.0 blue: 42.0/255.0 alpha: 1.0]
+#define hashTagColor [UIColor colorWithRed: 61.0/255.0 green: 170.0/255.0 blue: 70.0/255.0 alpha: 1.0]
+#define urlLinkColor [UIColor colorWithRed: 30.0/255.0 green: 111.0/255.0 blue: 230.0/255.0 alpha: 1.0]
+
+
 #pragma mark - Private Interface
 
 @interface KILabel()
@@ -247,7 +252,15 @@ NSString * const KILabelLinkKey = @"link";
     
     if (!attributes)
     {
-        attributes = @{NSForegroundColorAttributeName : self.tintColor};
+        if (linkType == KILinkTypeUserHandle) {
+            attributes = @{NSForegroundColorAttributeName : userTagColor};
+        }else if (linkType == KILinkTypeHashtag){
+            attributes = @{NSForegroundColorAttributeName : hashTagColor};
+        }else{
+            attributes = @{NSForegroundColorAttributeName : urlLinkColor};
+        }
+        
+        
     }
     
     return attributes;
@@ -354,7 +367,7 @@ NSString * const KILabelLinkKey = @"link";
     
     // Create the dictionary
     NSDictionary *attributes = @{NSFontAttributeName : self.font,
-                                 NSForegroundColorAttributeName : color,
+                                 NSForegroundColorAttributeName : [UIColor redColor],
                                  NSShadowAttributeName : shadow,
                                  NSParagraphStyleAttributeName : paragraph,
                                  };
@@ -515,7 +528,7 @@ NSString * const KILabelLinkKey = @"link";
         
         // Use our tint color to hilight the link
         [attributedString addAttributes:attributes range:range];
-        
+
         // Add an URL attribute if this is a URL
         if (_systemURLStyle && ((KILinkType)[dictionary[KILabelLinkTypeKey] unsignedIntegerValue] == KILinkTypeURL))
         {
@@ -523,8 +536,7 @@ NSString * const KILabelLinkKey = @"link";
             [attributedString addAttribute:NSLinkAttributeName value:dictionary[KILabelLinkKey] range:range];
         }
     }
-    
-    return attributedString;
+        return attributedString;
 }
 
 #pragma mark - Layout and Rendering
