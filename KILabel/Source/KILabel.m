@@ -367,7 +367,7 @@ NSString * const KILabelLinkKey = @"link";
     
     // Create the dictionary
     NSDictionary *attributes = @{NSFontAttributeName : self.font,
-                                 NSForegroundColorAttributeName : [UIColor redColor],
+                                 NSForegroundColorAttributeName : color,
                                  NSShadowAttributeName : shadow,
                                  NSParagraphStyleAttributeName : paragraph,
                                  };
