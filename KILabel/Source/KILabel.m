@@ -881,6 +881,10 @@ NSString * const KILabelClassifierKey = @"classifier";
 {
     // Check to see if there's a link attribute in the text, which will be our link text. If not
     // we'll use the string in the raw text.
+    if (range.location == NSNotFound || range.location >= attrStr.length) {
+        return @"";
+    }
+    
     id realURL = [attrStr attribute:NSLinkAttributeName atIndex:range.location effectiveRange:nil];
     if (realURL == nil)
     {
