@@ -569,7 +569,9 @@ NSString * const KILabelLinkKey = @"link";
     if (touchedLink) {
         self.selectedRange = [[touchedLink objectForKey:KILabelRangeKey] rangeValue];
     } else {
-        _planTextHandler(self, self.text, NSMakeRange(0, self.text.length));
+        if (_planTextHandler) {
+            _planTextHandler(self, self.text, NSMakeRange(0, self.text.length));
+        }
         [super touchesBegan:touches withEvent:event];
     }
 }
