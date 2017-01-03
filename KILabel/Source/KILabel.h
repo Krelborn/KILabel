@@ -176,6 +176,12 @@ IB_DESIGNABLE
  */
 @property (nullable, nonatomic, copy) KILinkTapHandler urlLinkTapHandler;
 
+
+/**
+ * Callback block for KILinkTypePlainText link tap.
+ */
+@property (nullable, nonatomic, copy) KILinkTapHandler planTextHandler;
+
 /** ****************************************************************************************** **
  * @name Geometry
  ** ****************************************************************************************** **/
