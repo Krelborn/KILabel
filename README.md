@@ -62,6 +62,11 @@ label.urlLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
   NSLog(@"URL tapped %@", string);
 };
 
+// Attach a block to be called when the user taps plan text area
+label.planTextHandler = ^(KILabel *label, NSString *string, NSRange range) {
+NSLog(@"Text tapped %@", string);
+};
+
 [self.view addSubview:label];
 ```
 
@@ -85,6 +90,11 @@ label.hashtagLinkTapHandler = { label, hashtag, range in
 // Attach a block to be called when the user taps a URL
 label.urlLinkTapHandler = { label, url, range in
   NSLog("URL \(url) tapped")
+}
+
+// Attach a block to be called when the user taps plan text area
+label.planTextHandler = { label, text, range in
+NSLog("text \(text) tapped")
 }
 
 view.addSubview(label)

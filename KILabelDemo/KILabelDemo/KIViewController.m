@@ -76,6 +76,10 @@
         // Open URLs
         [self attemptOpenURL:[NSURL URLWithString:string]];
     };
+    
+    _label.planTextHandler = ^(KILabel *label, NSString *string, NSRange range) {
+        NSLog(@"no login ");
+    };
 }
 
 #pragma mark - Action Targets

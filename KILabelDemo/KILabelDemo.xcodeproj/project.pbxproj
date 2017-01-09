@@ -25,6 +25,8 @@
 		C97DB327183A59670028EA5C /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C97DB326183A59670028EA5C /* MessageUI.framework */; };
 		C9ABA08A1AEE5A8600363407 /* KILabelTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */; };
 		C9ABA08D1AEE5BAC00363407 /* KILabelTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C9ABA08C1AEE5BAC00363407 /* KILabelTableViewCell.m */; };
+		F21C4C4F1E1BACA500D2A802 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F21C4C4E1E1BACA500D2A802 /* Launch Screen.storyboard */; };
+		F21C4C501E1BACA500D2A802 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F21C4C4E1E1BACA500D2A802 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +66,7 @@
 		C9ABA0891AEE5A8600363407 /* KILabelTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabelTableViewController.m; sourceTree = "<group>"; };
 		C9ABA08B1AEE5BAC00363407 /* KILabelTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KILabelTableViewCell.h; sourceTree = "<group>"; };
 		C9ABA08C1AEE5BAC00363407 /* KILabelTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KILabelTableViewCell.m; sourceTree = "<group>"; };
+		F21C4C4E1E1BACA500D2A802 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +97,7 @@
 		C97DB2E1183A56EF0028EA5C = {
 			isa = PBXGroup;
 			children = (
+				F21C4C4E1E1BACA500D2A802 /* Launch Screen.storyboard */,
 				C97DB322183A57010028EA5C /* KILabel */,
 				C97DB2F3183A56EF0028EA5C /* KILabelDemo */,
 				C97DB312183A56F00028EA5C /* KILabelDemoTests */,
@@ -224,7 +228,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = KI;
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Matthew Styles";
 				TargetAttributes = {
 					C97DB30A183A56F00028EA5C = {
@@ -258,6 +262,7 @@
 			files = (
 				C97DB306183A56EF0028EA5C /* Images.xcassets in Resources */,
 				C97DB2F8183A56EF0028EA5C /* InfoPlist.strings in Resources */,
+				F21C4C4F1E1BACA500D2A802 /* Launch Screen.storyboard in Resources */,
 				C97DB301183A56EF0028EA5C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -266,6 +271,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F21C4C501E1BACA500D2A802 /* Launch Screen.storyboard in Resources */,
 				C97DB317183A56F00028EA5C /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -345,13 +351,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -383,13 +395,18 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -406,10 +423,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KILabelDemo/KILabelDemo-Prefix.pch";
 				INFOPLIST_FILE = "KILabelDemo/KILabelDemo-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.compiledcreations.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -419,10 +436,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KILabelDemo/KILabelDemo-Prefix.pch";
 				INFOPLIST_FILE = "KILabelDemo/KILabelDemo-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.compiledcreations.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -444,6 +461,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "KILabelDemoTests/KILabelDemoTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "MatthewStyles.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -462,6 +480,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KILabelDemo/KILabelDemo-Prefix.pch";
 				INFOPLIST_FILE = "KILabelDemoTests/KILabelDemoTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "MatthewStyles.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
