@@ -35,6 +35,7 @@
 - (IBAction)toggleDetectURLs:(UISwitch *)sender;
 - (IBAction)toggleDetectUsernames:(UISwitch *)sender;
 - (IBAction)toggleDetectHashtags:(UISwitch *)sender;
+- (IBAction)toggleDetectPhoneNumbers:(id)sender;
 - (IBAction)longPressLabel:(UILongPressGestureRecognizer *)sender;
 
 @end
@@ -72,6 +73,16 @@
         [self presentViewController:alert animated:YES completion:nil];
     };
     
+    _label.phoneNumberLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
+        NSString *message = [NSString stringWithFormat:@"You tapped %@", string];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Phone Number"
+                                                                       message:message
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleDefault handler:nil]];
+        
+        [self presentViewController:alert animated:YES completion:nil];
+    };
+
     _label.urlLinkTapHandler = ^(KILabel *label, NSString *string, NSRange range) {
         // Open URLs
         [self attemptOpenURL:[NSURL URLWithString:string]];
@@ -189,6 +200,23 @@
     }
 }
 
+/**
+ *  Action method to demonstrate toggling of Phone Numbers hilighting and hit detection.
+ *
+ *  @param sender Switch action is bound to
+ */
+- (IBAction)toggleDetectPhoneNumbers:(UISwitch *)sender
+{
+    if (sender.isOn)
+    {
+        self.label.linkDetectionTypes |= KILinkTypeOptionPhoneNumber;
+    }
+    else
+    {
+        self.label.linkDetectionTypes ^= KILinkTypeOptionPhoneNumber;
+    }
+}
+
 
 #pragma mark - Helper methods
 
@@ -204,16 +232,16 @@
     
     if (safariCompatible && [[UIApplication sharedApplication] canOpenURL:url])
     {
-        [[UIApplication sharedApplication] openURL:url];
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
     }
     else
     {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Problem"
-                                                        message:@"The selected link cannot be opened."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"Dismiss"
-                                              otherButtonTitles:nil];
-        [alert show];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Problem"
+                                                                       message:@"The selected link cannot be opened."
+                                                                preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Dismiss" style:UIAlertActionStyleCancel handler:nil]];
+
+        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert animated:YES completion:nil];
     }
 }
 

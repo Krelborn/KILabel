@@ -77,6 +77,22 @@ NSString * const KILabelCellIdentifier = @"labelCell";
                               @"explain why this is the case http://www.adweek.com/socialtimes/the-reason-for-the-160-character-text-message-and-140-character-twitter-length-limits/4914.";
             break;
             
+        case 3:
+            cell.label.text = @"This is a phone number +1-617-555-1212, and this is a number (800) 555-1212.";
+            break;
+
+        case 4: {
+            NSString *phoneNumber = @"+1-617-555-1212";
+            NSMutableAttributedString *text = [[NSMutableAttributedString alloc]
+                                               initWithString:[NSString stringWithFormat:@"This is a phone number %@ and the label is set to honor only matches with pre-existing NSLinkAttributeName's. This (508-555-1212) should have no link.", phoneNumber]
+                                               attributes:@{NSFontAttributeName:cell.label.font}];
+            NSRange range = [text.string rangeOfString:phoneNumber];
+            [text addAttribute:NSLinkAttributeName value:phoneNumber range:range];
+            cell.label.ignoreMatchesWithoutLinkAttribute = YES;
+            cell.label.attributedText = text;
+            break;
+        }
+
         default:
             cell.label.text = @"This row has no content!";
             break;
@@ -90,6 +106,7 @@ NSString * const KILabelCellIdentifier = @"labelCell";
     cell.label.userHandleLinkTapHandler = tapHandler;
     cell.label.urlLinkTapHandler = tapHandler;
     cell.label.hashtagLinkTapHandler = tapHandler;
+    cell.label.phoneNumberLinkTapHandler = tapHandler;
     
     return cell;
 }

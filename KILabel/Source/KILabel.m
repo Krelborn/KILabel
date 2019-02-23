@@ -114,6 +114,9 @@ NSString * const KILabelLinkKey = @"link";
     // Link Type Attributes. Default is empty (no attributes).
     _linkTypeAttributes = [NSMutableDictionary dictionary];
     
+    // Highlight all matches for enabled link types
+    _ignoreMatchesWithoutLinkAttribute = NO;
+    
     // Don't underline URL links by default.
     _systemURLStyle = NO;
     
@@ -388,6 +391,11 @@ NSString * const KILabelLinkKey = @"link";
         [rangesForLinks addObjectsFromArray:[self getRangesForURLs:self.attributedText]];
     }
     
+    if (self.linkDetectionTypes & KILinkTypeOptionPhoneNumber)
+    {
+        [rangesForLinks addObjectsFromArray:[self getRangesForPhoneNumbers:self.attributedText]];
+    }
+    
     return rangesForLinks;
 }
 
@@ -457,14 +465,13 @@ NSString * const KILabelLinkKey = @"link";
     return rangesForHashtags;
 }
 
-
-- (NSArray *)getRangesForURLs:(NSAttributedString *)text
+- (NSArray *)_getRangesForDetectorType:(NSTextCheckingTypes)detectorType usingLinkType:(KILinkType)linkType forText:(NSAttributedString *)text
 {
-    NSMutableArray *rangesForURLs = [[NSMutableArray alloc] init];;
+    NSMutableArray *ranges = [[NSMutableArray alloc] init];
     
-    // Use a data detector to find urls in the text
+    // Use a data detector to mathing text
     NSError *error = nil;
-    NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
+    NSDataDetector *detector = [[NSDataDetector alloc] initWithTypes:detectorType error:&error];
     
     NSString *plainText = text.string;
     
@@ -478,23 +485,49 @@ NSString * const KILabelLinkKey = @"link";
         NSRange matchRange = [match range];
         
         // If there's a link embedded in the attributes, use that instead of the raw text
-        NSString *realURL = [text attribute:NSLinkAttributeName atIndex:matchRange.location effectiveRange:nil];
-        if (realURL == nil)
-            realURL = [plainText substringWithRange:matchRange];
+        __block NSString *realText = nil;
+        __block NSRange realRange = matchRange;
+
+        if (_ignoreMatchesWithoutLinkAttribute) {
+            [text enumerateAttributesInRange:matchRange
+                                     options:0
+                                  usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
+                                      if (attrs[NSLinkAttributeName]) {
+                                          // this is the text to highlight
+                                          realText = attrs[NSLinkAttributeName];
+                                          realRange = range;
+                                          *stop = YES;
+                                      }
+                                  }];
+        }
         
-        if (![self ignoreMatch:realURL])
+        if (realText == nil && !_ignoreMatchesWithoutLinkAttribute)
+            realText = [plainText substringWithRange:realRange];
+        
+        if (realText && ![self ignoreMatch:realText])
         {
-            if ([match resultType] == NSTextCheckingTypeLink)
+            if ([match resultType] == detectorType)
             {
-                [rangesForURLs addObject:@{KILabelLinkTypeKey : @(KILinkTypeURL),
-                                           KILabelRangeKey : [NSValue valueWithRange:matchRange],
-                                           KILabelLinkKey : realURL,
-                                        }];
+                [ranges addObject:@{KILabelLinkTypeKey : @(linkType),
+                                           KILabelRangeKey : [NSValue valueWithRange:realRange],
+                                           KILabelLinkKey : realText,
+                                           }];
             }
         }
     }
     
-    return rangesForURLs;
+    return ranges;
+    
+}
+
+- (NSArray *)getRangesForURLs:(NSAttributedString *)text
+{
+    return [self _getRangesForDetectorType:NSTextCheckingTypeLink usingLinkType:KILinkTypeURL forText:text];
+}
+
+- (NSArray *)getRangesForPhoneNumbers:(NSAttributedString *)text
+{
+    return [self _getRangesForDetectorType:NSTextCheckingTypePhoneNumber usingLinkType:KILinkTypePhoneNumber forText:text];
 }
 
 - (BOOL)ignoreMatch:(NSString*)string
@@ -512,12 +545,15 @@ NSString * const KILabelLinkKey = @"link";
         KILinkType linkType = [dictionary[KILabelLinkTypeKey] unsignedIntegerValue];
         
         NSDictionary *attributes = [self attributesForLinkType:linkType];
-        
+
+        // Remove any previously set NSLinkAttributeName so our attributes take hold
+        [attributedString removeAttribute:NSLinkAttributeName range:range];
+
         // Use our tint color to hilight the link
         [attributedString addAttributes:attributes range:range];
         
-        // Add an URL attribute if this is a URL
-        if (_systemURLStyle && ((KILinkType)[dictionary[KILabelLinkTypeKey] unsignedIntegerValue] == KILinkTypeURL))
+        // Add an URL attribute if this is a URL or phone number
+        if (_systemURLStyle && (linkType == KILinkTypeURL || linkType == KILinkTypePhoneNumber))
         {
             // Add a link attribute using the stored link
             [attributedString addAttribute:NSLinkAttributeName value:dictionary[KILabelLinkKey] range:range];
@@ -719,6 +755,13 @@ NSString * const KILabelLinkKey = @"link";
         if (_urlLinkTapHandler)
         {
             _urlLinkTapHandler(self, string, range);
+        }
+        break;
+            
+    case KILinkTypePhoneNumber:
+        if (_phoneNumberLinkTapHandler)
+        {
+            _phoneNumberLinkTapHandler(self, string, range);
         }
         break;
     }
